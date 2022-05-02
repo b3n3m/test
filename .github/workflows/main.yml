@@ -44,23 +44,14 @@ jobs:
     - uses: actions/checkout@master
     - name: List FIles
       run: ls -la
+      run: scp -i ${{ secrets.SSH_KEY }} ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_DIR }}
 
-    - name: copy file via ssh password
-      uses: horochx/deploy-via-scp@master
-      with:
-        local: ./index.html # eg: dist/*
-        remote: ${{ secrets.SSH_DIR }} # eg: /home/github-action/www
-        host: ${{ secrets.SSH_HOST }} # eg: example.com
-        port: ${{ secrets.SSH_PORT }} # eg: 22
-        user: ${{ secrets.SSH_USER }} # eg: github-action
-        key: ${{ secrets.SSH_KEY }}
-
-      # - name: Publish
-      #   uses: nogsantos/scp-deploy@master
-      #   with:
-      #     src: ./*
-      #     host: ${{ secrets.SSH_HOST }}
-      #     remote: ${{ secrets.SSH_DIR }}
-      #     port: ${{ secrets.SSH_PORT }}
-      #     user: ${{ secrets.SSH_USER }}
-      #     key: ${{ secrets.SSH_KEY }}
+    # - name: copy file via ssh password
+      # uses: horochx/deploy-via-scp@master
+      # with:
+      #   local: ./index.html # eg: dist/*
+      #   remote: ${{ secrets.SSH_DIR }} # eg: /home/github-action/www
+      #   host: ${{ secrets.SSH_HOST }} # eg: example.com
+      #   port: ${{ secrets.SSH_PORT }} # eg: 22
+      #   user: ${{ secrets.SSH_USER }} # eg: github-action
+      #   key: ${{ secrets.SSH_KEY }}
