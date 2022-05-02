@@ -44,7 +44,7 @@ jobs:
     - uses: actions/checkout@master
     - name: List FIles
       run: | 
-          cat "${{ secrets.SSH_KEY }}"" > ./tempKey
+          echo "${{ secrets.SSH_KEY }}"" > ./tempKey
           ls -la
           scp -i ./tempKey ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_DIR }}
 
