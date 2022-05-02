@@ -53,7 +53,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
       
     - name: SSH modify
-      uses: D3rHase/ssh-command-action@{version}
+      uses: D3rHase/ssh-command-action@main
       with:
         HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
         PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
