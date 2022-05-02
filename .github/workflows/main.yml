@@ -49,7 +49,10 @@ jobs:
         PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
         USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
         PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
-        COMMAND: "cd ${{ secrets.SSH_DIR }} && cd .. && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') && rm -rf test/*"    
+        COMMAND: "cd ${{ secrets.SSH_DIR }} && cd .. \
+        && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') \
+        && chown ${{secrets.SSH_USER}}:install test_bak*\
+        && rm -rf test/*"    
 
     - name: copy file via ssh password
       uses: horochx/deploy-via-scp@master
