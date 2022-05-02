@@ -40,12 +40,13 @@ jobs:
     name: Build and Deploy
 
     steps:
-      - name: Publish
-        uses: nogsantos/scp-deploy@master
-        with:
-          src: /
-          host: ${{ secrets.SSH_HOST }}
-          remote: ${{ secrets.SSH_DIR }}
-          port: ${{ secrets.SSH_PORT }}
-          user: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+    - uses: actions/checkout@v1
+    - name: 'Upload'
+      uses: lbejiuk/scp_action@v1
+      with:
+        public_key: ${{secrets.SSH_KEY}}
+        ssh_port: ${{ secrets.SSH_PORT }}
+        ssh_username: ${{ secrets.SSH_USER }}
+        ssh_host: ${{ secrets.SSH_HOST }}
+        source: '/'
+        target: ${{ secrets.SSH_DIR }}
