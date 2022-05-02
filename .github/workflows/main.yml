@@ -42,13 +42,13 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      
-      - name: Publish
-        uses: nogsantos/scp-deploy@master
+
+      - name: copy file via ssh key
+        uses: appleboy/scp-action@master
         with:
-          src: index.html
-          host: ${{ secrets.SSH_HOST }}
-          remote: ${{ secrets.SSH_DIR }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
-          user: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          source: "index.html"
+          target: "/deploydata/html/test/"
