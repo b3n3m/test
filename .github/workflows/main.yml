@@ -43,8 +43,9 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: List FIles
-      run: ls -la
-      run: scp -i ${{ secrets.SSH_KEY }} ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_DIR }}
+      run: | 
+          ls -la
+          scp -i ${{ secrets.SSH_KEY }} ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_DIR }}
 
     # - name: copy file via ssh password
       # uses: horochx/deploy-via-scp@master
