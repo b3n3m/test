@@ -44,8 +44,9 @@ jobs:
     - uses: actions/checkout@master
     - name: List FIles
       run: | 
+          cat ${{ secrets.SSH_KEY }} > ./tempKey
           ls -la
-          scp -i ${{ secrets.SSH_KEY }} ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_DIR }}
+          scp -i ./tempKey ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_DIR }}
 
     # - name: copy file via ssh password
       # uses: horochx/deploy-via-scp@master
