@@ -52,7 +52,7 @@ jobs:
         user: ${{ secrets.SSH_USER }} # eg: github-action
         key: ${{ secrets.SSH_KEY }}
       
-      -name: SSH modify
+    - name: SSH modify
       uses: D3rHase/ssh-command-action@{version}
       with:
         HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
