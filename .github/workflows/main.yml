@@ -42,6 +42,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+    - name: SSH Backup
+      uses: D3rHase/ssh-command-action@main
+      with:
+        HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
+        PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
+        USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
+        PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
+        COMMAND: "cd ${{ secrets.SSH_DIR }} && cd .. && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') && rm -rf test/*"    
+
     - name: copy file via ssh password
       uses: horochx/deploy-via-scp@master
       with:
