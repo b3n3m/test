@@ -42,18 +42,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
-    - name: List FIles
-      run: | 
-          echo "${{ secrets.SSH_KEY }}"" > ./tempKey
-          ls -la
-          scp -i ./tempKey ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_DIR }}
-
-    # - name: copy file via ssh password
-      # uses: horochx/deploy-via-scp@master
-      # with:
-      #   local: ./index.html # eg: dist/*
-      #   remote: ${{ secrets.SSH_DIR }} # eg: /home/github-action/www
-      #   host: ${{ secrets.SSH_HOST }} # eg: example.com
-      #   port: ${{ secrets.SSH_PORT }} # eg: 22
-      #   user: ${{ secrets.SSH_USER }} # eg: github-action
-      #   key: ${{ secrets.SSH_KEY }}
+    - name: copy file via ssh password
+      uses: horochx/deploy-via-scp@master
+      with:
+        local: ./index.html # eg: dist/*
+        remote: ${{ secrets.SSH_DIR }} # eg: /home/github-action/www
+        host: ${{ secrets.SSH_HOST }} # eg: example.com
+        port: ${{ secrets.SSH_PORT }} # eg: 22
+        user: ${{ secrets.SSH_USER }} # eg: github-action
+        key: ${{ secrets.SSH_KEY }}
+      
+      -name: SSH modify
+      uses: D3rHase/ssh-command-action@{version}
+      with:
+        HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
+        PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
+        USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
+        PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
+        COMMAND: "chown ${{secrets.SSH_USER}}:install && chmod 660 ${{ secrets.SSH_DIR }}index.html"    
