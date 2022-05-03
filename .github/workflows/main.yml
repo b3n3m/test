@@ -71,4 +71,4 @@ jobs:
         PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
         USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
         PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
-        COMMAND: "chown ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}index.html && chmod 660 ${{ secrets.SSH_DIR }}index.html"    
+        COMMAND: "chown ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}index.html && chmod 664 ${{ secrets.SSH_DIR }}index.html"    
