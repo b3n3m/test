@@ -36,7 +36,7 @@ jobs:
   #       echo test, and deploy your project.
   #       ls -la
   build:
-    needs: start
+    # needs: start
     runs-on: ubuntu-latest
     name: Build and Deploy
 
