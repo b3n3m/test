@@ -53,27 +53,27 @@ jobs:
     #     && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') \
     #     && chown ${{secrets.SSH_USER}}:install test_bak*\
     #     && rm -rf test/*"    
-    -name: "List Files"
-      run: "ls -la"
-      
-    - name: copy file via ssh password
-      uses: horochx/deploy-via-scp@master
-      with:
-        local: ./frontend/build/* # eg: dist/*
-        remote: ${{ secrets.SSH_DIR }} # eg: /home/github-action/www
-        host: ${{ secrets.SSH_HOST }} # eg: example.com
-        port: ${{ secrets.SSH_PORT }} # eg: 22
-        user: ${{ secrets.SSH_USER }} # eg: github-action
-        key: ${{ secrets.SSH_KEY }}
-      
-    - name: SSH modify
-      uses: D3rHase/ssh-command-action@main
-      with:
-        HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
-        PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
-        USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
-        PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
-        COMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* \
-        && chmod 755 $(find ${{ secrets.SSH_DIR }} -type d) \
-        && chmod 644 $(find ${{ secrets.SSH_DIR }} -type f) \
-        && chmod -R 755 ${{ secrets.SSH_DIR }}/js"
+      -name: "List Files"
+        run: "ls -la"
+        
+      - name: copy file via ssh password
+        uses: horochx/deploy-via-scp@master
+        with:
+          local: ./frontend/build/* # eg: dist/*
+          remote: ${{ secrets.SSH_DIR }} # eg: /home/github-action/www
+          host: ${{ secrets.SSH_HOST }} # eg: example.com
+          port: ${{ secrets.SSH_PORT }} # eg: 22
+          user: ${{ secrets.SSH_USER }} # eg: github-action
+          key: ${{ secrets.SSH_KEY }}
+        
+      - name: SSH modify
+        uses: D3rHase/ssh-command-action@main
+        with:
+          HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
+          PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
+          USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
+          PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
+          COMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* \
+          && chmod 755 $(find ${{ secrets.SSH_DIR }} -type d) \
+          && chmod 644 $(find ${{ secrets.SSH_DIR }} -type f) \
+          && chmod -R 755 ${{ secrets.SSH_DIR }}/js"
