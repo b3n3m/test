@@ -40,24 +40,24 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy
 
-    steps:
-    - uses: actions/checkout@master
-    - name: SSH Backup
-      uses: D3rHase/ssh-command-action@main
-      with:
-        HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
-        PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
-        USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
-        PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
-        COMMAND: "cd ${{ secrets.SSH_DIR }} && cd .. \
-        && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') \
-        && chown ${{secrets.SSH_USER}}:install test_bak*\
-        && rm -rf test/*"    
+    # steps:
+    # - uses: actions/checkout@master
+    # - name: SSH Backup
+    #   uses: D3rHase/ssh-command-action@main
+    #   with:
+    #     HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
+    #     PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
+    #     USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
+    #     PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
+    #     COMMAND: "cd ${{ secrets.SSH_DIR }} && cd .. \
+    #     && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') \
+    #     && chown ${{secrets.SSH_USER}}:install test_bak*\
+    #     && rm -rf test/*"    
 
     - name: copy file via ssh password
       uses: horochx/deploy-via-scp@master
       with:
-        local: ./* # eg: dist/*
+        local: ./frontend/build/* # eg: dist/*
         remote: ${{ secrets.SSH_DIR }} # eg: /home/github-action/www
         host: ${{ secrets.SSH_HOST }} # eg: example.com
         port: ${{ secrets.SSH_PORT }} # eg: 22
@@ -71,4 +71,7 @@ jobs:
         PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
         USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
         PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
-        COMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* && chmod -R 664 ${{ secrets.SSH_DIR }}frontend"    
+        COMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* \
+        && chmod 755 $(find ${{ secrets.SSH_DIR }} -type d) \
+        && chmod 644 $(find ${{ secrets.SSH_DIR }} -type f) \
+        && chmod -R 755 ${{ secrets.SSH_DIR }}/js"
