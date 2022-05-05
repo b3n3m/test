@@ -57,7 +57,7 @@ jobs:
     - name: copy file via ssh password
       uses: horochx/deploy-via-scp@master
       with:
-        local: ./index.html # eg: dist/*
+        local: ./* # eg: dist/*
         remote: ${{ secrets.SSH_DIR }} # eg: /home/github-action/www
         host: ${{ secrets.SSH_HOST }} # eg: example.com
         port: ${{ secrets.SSH_PORT }} # eg: 22
@@ -71,4 +71,4 @@ jobs:
         PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
         USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
         PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
-        COMMAND: "chown ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}index.html && chmod 664 ${{ secrets.SSH_DIR }}index.html"    
+        COMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* && chmod -R 664 ${{ secrets.SSH_DIR }}*"    
