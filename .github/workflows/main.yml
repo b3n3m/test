@@ -43,7 +43,6 @@ jobs:
     steps:
     - name: Install sshpass
       run: |
-      apt update
       apt install sshpass -y
     # - uses: actions/checkout@master
     # - name: SSH Backup
