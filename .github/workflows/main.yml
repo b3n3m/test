@@ -53,7 +53,7 @@ jobs:
     #     && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') \
     #     && chown ${{secrets.SSH_USER}}:install test_bak*\
     #     && rm -rf test/*"    
-      -name: "List Files"
+      - name: "List Files"
         run: "ls -la"
         
       - name: copy file via ssh password
