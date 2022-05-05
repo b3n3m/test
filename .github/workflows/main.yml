@@ -45,7 +45,7 @@ jobs:
       run: |
           sudo apt-get update
           sudo apt-get install sshpass -y
-    . name: SCP
+    - name: SCP
       run: sshpass -p "${{ secrets.SSH_PAS }}" scp ./index.html ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.SSH_DIR }}indexo.html
     # - uses: actions/checkout@master
     # - name: SSH Backup
