@@ -42,17 +42,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
-    # - name: SSH Backup
-    #   uses: D3rHase/ssh-command-action@main
-    #   with:
-    #     HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
-    #     PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
-    #     USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
-    #     PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
-    #     COMMAND: "cd ${{ secrets.SSH_DIR }} && cd .. \
-    #     && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') \
-    #     && chown ${{secrets.SSH_USER}}:install test_bak*\
-    #     && rm -rf test/*"    
+      - name: SSH Backup
+        uses: D3rHase/ssh-command-action@main
+        with:
+          HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
+          PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
+          USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
+          PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
+          COMMAND: "cd ${{ secrets.SSH_DIR }} && cd .. \
+          && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') \
+          && chown ${{secrets.SSH_USER}}:install test_bak*\
+          && rm -rf test/*"    
       - name: "List Files"
         run: "ls -la"
         
@@ -76,4 +76,4 @@ jobs:
           COMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* \
           && chmod 755 $(find ${{ secrets.SSH_DIR }} -type d) \
           && chmod 644 $(find ${{ secrets.SSH_DIR }} -type f) \
-          && chmod -R 755 ${{ secrets.SSH_DIR }}/js"
+          && chmod -R 755 ${{ secrets.SSH_DIR }}static/js"
