@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy
 
-    # steps:
+    steps:
     # - uses: actions/checkout@master
     # - name: SSH Backup
     #   uses: D3rHase/ssh-command-action@main
