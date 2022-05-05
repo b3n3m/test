@@ -55,6 +55,7 @@ jobs:
     #     && rm -rf test/*"    
 
     - name: copy file via ssh password
+      run: "ls -la"
       uses: horochx/deploy-via-scp@master
       with:
         local: ./frontend/build/* # eg: dist/*
