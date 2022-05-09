@@ -57,23 +57,22 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '16'
-    # - name: Compile Frontend
-    #   run: |
-    #         node -v
-    #         npm -v
-    #         cd frontend
-    #         npm install
-    #         npm run build
+    - name: Compile Frontend
+      run: |
+            node -v
+            npm -v
+            cd frontend
+            npm install
+            npm run build
     - name: Prepare Backend
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             cd ${{ secrets.SSH_DIR }} && \
             mkdir -p swd
             EOF
-    # - name: Rollout Frontend
-    #   run: |
-    #         cd ..
-    #         sshpass -p "${{ secrets.SSH_PAS }}" scp -o StrictHostKeyChecking=no ./ ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.SSH_DIR }}
+    - name: Deploy Frontend
+      run: |
+            sshpass -p "${{ secrets.SSH_PAS }}" scp -o StrictHostKeyChecking=no ./frontend/build/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.SSH_DIR }}test/swd/
     - name: Release Frontend
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
