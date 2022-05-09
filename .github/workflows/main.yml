@@ -77,9 +77,9 @@ jobs:
     - name: Release Frontend
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
-            rm -rf bak 2>/dev/null && \
-            mv prd bak 2>/dev/null && \
-            mv swd prd
+            rm -rf bak || echo "bak not found" && \
+            mv prd bak || echo "prd not found" && \
+            mv swd prd || echo "swd not found"
             EOF
     # - uses: actions/checkout@master
     # - name: SSH Backup
