@@ -49,6 +49,7 @@ jobs:
           ls -la
           echo "This is PWD"
           pwd
+          ip a
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
