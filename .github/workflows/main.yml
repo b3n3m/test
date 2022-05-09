@@ -49,16 +49,6 @@ jobs:
           ls -la
           echo "This is PWD"
           pwd
-          echo "########################"
-          cd ..
-          ls -la
-          echo "########################"
-          cd ..
-          ls -la
-          echo "This is Home"
-          cd ~
-          pwd
-
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
@@ -70,6 +60,7 @@ jobs:
             cd frontend
             npm install
             npm run build
+            chmod -R 755 build/static/js
     - name: Prepare Backend
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
@@ -85,7 +76,7 @@ jobs:
             cd ${{ secrets.SSH_DIR }} && \
             rm -rf bak || echo "bak not found" && \
             mv prd bak || echo "prd not found" && \
-            mv swd prd || echo "swd not found"
+            mv swd prd || echo "swd not found" && \
             EOF
     # - uses: actions/checkout@master
     # - name: SSH Backup
