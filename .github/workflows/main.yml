@@ -50,7 +50,7 @@ jobs:
           echo "This is PWD"
           pwd
           echo "THis is Home"
-          ll ~
+          ls -la ~
 
     - name: Setup Node
       uses: actions/setup-node@v3
