@@ -47,8 +47,23 @@ jobs:
           sudo apt-get update
           sudo apt-get install sshpass -y
           ls -la
-    - name: SCP
-      run: sshpass -p "${{ secrets.SSH_PAS }}" scp -o StrictHostKeyChecking=no ./index.html ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.SSH_DIR }}indexo.html
+          pwd
+    - name: Setup Node
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+    - name: Compile Frontend
+      run: |
+            node -v
+            npm -v
+            cd frontend
+            npm install
+            npm run build
+    # - name: Rollout Frontend
+    #   run: |
+    #         cd ..
+    #         sshpass -p "${{ secrets.SSH_PAS }}" scp -o StrictHostKeyChecking=no ./ ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.SSH_DIR }}
+
     # - uses: actions/checkout@master
     # - name: SSH Backup
     #   uses: D3rHase/ssh-command-action@main
