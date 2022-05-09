@@ -60,7 +60,8 @@ jobs:
             cd frontend
             npm install
             npm run build
-            chmod -R 755 build/static/js
+            echo "chmod for js"
+            chmod -R 755 ./build/static/js
     - name: Prepare Backend
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
