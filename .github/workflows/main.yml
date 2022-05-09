@@ -77,8 +77,8 @@ jobs:
     - name: Release Frontend
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
-            rm -rf bak && \
-            mv prd bak && \
+            rm -rf bak 2>/dev/null && \
+            mv prd bak 2>/dev/null && \
             mv swd prd
             EOF
     # - uses: actions/checkout@master
