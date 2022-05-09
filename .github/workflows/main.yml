@@ -49,6 +49,12 @@ jobs:
           ls -la
           echo "This is PWD"
           pwd
+          echo "########################"
+          cd ..
+          ls -la
+          echo "########################"
+          cd ..
+          ls -la
           echo "This is Home"
           cd ~
           pwd
@@ -72,7 +78,7 @@ jobs:
             EOF
     - name: Deploy Frontend
       run: |
-            sshpass -p "${{ secrets.SSH_PAS }}" scp -o StrictHostKeyChecking=no ./frontend/build/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.SSH_DIR }}test/swd/
+            sshpass -p "${{ secrets.SSH_PAS }}" scp -o StrictHostKeyChecking=no ./frontend/build/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.SSH_DIR }}swd/
     - name: Release Frontend
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
