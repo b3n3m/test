@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 # Controls when the workflow will run
@@ -15,26 +13,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  # start:
-  #   # The type of runner that the job will run on
-  #   runs-on: ubuntu-latest
-
-  #   # Steps represent a sequence of tasks that will be executed as part of the job
-  #   steps:
-  #   # Check s-out your repository under $GITHUB_WORKSPACE, so your job can access it
-  #   - uses: actions/checkout@v3
-
-  #   # Runs a single command using the runners shell
-  #   - name: Run a one-line script
-  #     run: echo Hello, world!
-
-  #   # Runs a set of commands using the runners shell
-  #   - name: Run a multi-line script
-  #     run: |
-  #       echo Add other actions to build,
-  #       echo test, and deploy your project.
-  #       ls -la
+  # This workflow cont
   build:
     # needs: start
     runs-on: ubuntu-latest
@@ -80,43 +59,7 @@ jobs:
             mv prd bak || echo "prd not found" && \
             mv swd prd || echo "swd not found"
             EOF
-    # - uses: actions/checkout@master
-    # - name: SSH Backup
-    #   uses: D3rHase/ssh-command-action@main
-    #   with:
-    #     HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
-    #     PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
-    #     USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
-    #     PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}                   # Private ssh key registered on the remote server - Required: true
-    #     COMMAND: "cd ${{ secrets.SSH_DIR }} && cd .. \
-    #     && cp -r test test_bak_$(date '+%Y%m%d%H%M%S') \
-    #     && chown ${{secrets.SSH_USER}}:install test_bak*\
-    #     && rm -rf test/*"    
-    # - name: "List Files"
-    #   run: "ls -la"
-      
-    # - name: copy file via ssh password
-    #   uses: horochx/deploy-via-scp@master
-    #   with:
-    #     local: ./frontend/build/* # eg: dist/*
-    #     remote: ${{ secrets.SSH_DIR }} # eg: /home/github-action/www
-    #     host: ${{ secrets.SSH_HOST }} # eg: example.com
-    #     port: ${{ secrets.SSH_PORT }} # eg: 22
-    #     user: ${{ secrets.SSH_USER }} # eg: github-action
-    #     key: ${{ secrets.SSH_KEY }}
-    
-    # - name: Manual Copy
-    #   run: |
-    #         apt install sshpass &&
-    #         sshpass -p '${{ secrets'
-    # - name: SSH modify
-    #   uses: D3rHase/ssh-command-action@main
-    #   with:
-    #     HOST: ${{secrets.SSH_HOST}}                             # Remote server address / ip - Required: true
-    #     PORT: ${{secrets.SSH_PORT}}                             # Remote server port -  Default: 22 - Required: false
-    #     USER: ${{secrets.SSH_USER}}                             # Remote server user - Required: true
-    #     PRIVATE_SSH_KEY: ${{secrets.SSH_KEY}}       # Private ssh key registered on the remote server - Required: true
-    #     COMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* \
+    # - usesMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* \
     #     && chmod 755 $(find ${{ secrets.SSH_DIR }} -type d) \
     #     && chmod 644 $(find ${{ secrets.SSH_DIR }} -type f) \
     #     && chmod -R 755 ${{ secrets.SSH_DIR }}static/js"
