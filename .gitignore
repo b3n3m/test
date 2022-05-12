@@ -1,3 +1,19 @@
+*.sqlite3
+.idea
+.DS*
+__pycache__
+env
+/static/
+.vscode/settings.json
+.env
+app/migrations/*
+database/mongo*
+custom_user/migrations/*
+
+.empty
+.vscode
+.pytest_cache
+
 # frontend
 # dependencies
 frontend/node_modules
@@ -8,7 +24,7 @@ frontend/.pnp.js
 frontend/coverage
 
 # production
-# frontend/build
+frontend/build
 
 # misc
 frontend/.DS_Store
@@ -18,3 +34,6 @@ frontend/.env.test.local
 frontend/.env.production.local
 
 frontend/npm-debug.log*
+
+# Docs 
+docs/_*
