@@ -37,6 +37,7 @@ jobs:
       if: ${{ github.ref == 'refs/heads/main' }}
       run: |
             echo "DIR=prod" >> $GITHUB_ENV
+    - name: Check / set env Dev
       if: ${{ github.ref == 'refs/heads/develop' }}
       run: |
             echo "DIR=dev" >> $GITHUB_ENV
