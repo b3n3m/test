@@ -24,15 +24,23 @@ jobs:
     # needs: start
     runs-on: ubuntu-latest
     name: Build and Deploy
-    env:
-      if: ${{ github.ref == 'refs/heads/main' }}
-      DIR: prod
-      if: ${{ github.ref == 'refs/heads/develop' }}
-      DIR: dev
+    # env:
+    #   if: ${{ github.ref == 'refs/heads/main' }}
+    #   DIR: prod
+    #   if: ${{ github.ref == 'refs/heads/develop' }}
+    #   DIR: dev
 
 
     steps:
     - uses: actions/checkout@v3
+    - name: Check / set env Prod
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+            echo "DIR=prod" >> $GITHUB_ENV
+      if: ${{ github.ref == 'refs/heads/develop' }}
+      run: |
+            echo "DIR=dev" >> $GITHUB_ENV
+
     - name: Install sshpass
       run: |
           sudo apt-get update
