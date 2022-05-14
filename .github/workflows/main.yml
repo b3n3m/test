@@ -8,6 +8,7 @@ on:
     # paths-ignore:
     paths:
       - 'frontend/**'
+      - '.github/workflows/*'
       - '!docs/**'
       - '!**.md'
   pull_request:
