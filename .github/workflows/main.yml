@@ -25,8 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy
     env:
-      if: ${{ github.ref == 'refs/heads/master' }}
+      if: ${{ github.ref == 'refs/heads/main' }}
       DIR: prod
+      if: ${{ github.ref == 'refs/heads/develop' }}
+      DIR: dev
+
 
     steps:
     - uses: actions/checkout@v3
