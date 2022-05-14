@@ -24,6 +24,9 @@ jobs:
     # needs: start
     runs-on: ubuntu-latest
     name: Build and Deploy
+    env:
+      if: ${{ github.ref == 'refs/heads/master' }}
+      DIR: prod
 
     steps:
     - uses: actions/checkout@v3
