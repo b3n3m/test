@@ -64,6 +64,7 @@ jobs:
             mv prd bak || echo "prd not found" && \
             mv swd prd || echo "swd not found"
             EOF
+            
     # - usesMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* \
     #     && chmod 755 $(find ${{ secrets.SSH_DIR }} -type d) \
     #     && chmod 644 $(find ${{ secrets.SSH_DIR }} -type f) \
