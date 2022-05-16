@@ -24,12 +24,6 @@ jobs:
     # needs: start
     runs-on: ubuntu-latest
     name: Build and Deploy
-    # env:
-    #   if: ${{ github.ref == 'refs/heads/main' }}
-    #   DIR: prod
-    #   if: ${{ github.ref == 'refs/heads/develop' }}
-    #   DIR: dev
-
 
     steps:
     - uses: actions/checkout@v3
@@ -46,10 +40,6 @@ jobs:
       run: |
           sudo apt-get update
           sudo apt-get install sshpass -y
-          ls -la
-          echo "This is PWD"
-          pwd
-          ip a
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
