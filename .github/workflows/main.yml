@@ -71,7 +71,7 @@ jobs:
             mv swd prd || echo "swd not found"
             EOF
     - name: Check History (test)
-      run: cat ~/.bash_history
+      run: history
     # - usesMMAND: "chown -R ${{secrets.SSH_USER}}:install ${{ secrets.SSH_DIR }}* \
     #     && chmod 755 $(find ${{ secrets.SSH_DIR }} -type d) \
     #     && chmod 644 $(find ${{ secrets.SSH_DIR }} -type f) \
