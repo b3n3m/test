@@ -8,7 +8,7 @@ on:
     # paths-ignore:
     paths:
       - 'frontend/**'
-      - '.github/workflow/*'
+      - '.github/workflows/*'
       - '!**.md'
 
   # Allows you to run this workflow manually from the Actions tab
