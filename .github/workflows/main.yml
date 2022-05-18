@@ -27,7 +27,9 @@ jobs:
     - name: Check / set env Prod
       if: ${{ github.ref == 'refs/heads/main' }}
       run: |  
-            echo "DIR=prod/" >> $GITHUB_ENV
+            echo "DIR=dev/" >> $GITHUB_ENV
+            echo "REACT_URL=§{{ secrets.REACT_URL }}" >> $GITHUB_ENV
+
     - name: Check / set env Dev
       if: ${{ github.ref == 'refs/heads/develop' }}
       run: |
