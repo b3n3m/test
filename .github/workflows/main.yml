@@ -48,6 +48,7 @@ jobs:
       run: |
             node -v
             npm -v
+            echo $REACT_URL
             cd frontend
             npm install
             npm run build
