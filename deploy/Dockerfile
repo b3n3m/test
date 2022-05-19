@@ -3,7 +3,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 WORKDIR /home/app/webapp
 # Install requirements
-COPY ./backend/ /home/app/webapp/
+COPY ../data/ /home/app/webapp/
 # RUN apt-get update
 # RUN pip install --upgrade pip
 RUN pip install -r /home/app/webapp/requirements.txt
