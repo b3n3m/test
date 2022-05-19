@@ -32,5 +32,5 @@ jobs:
                 && ../../operations/iptables -t mangle -F PREROUTING \
                 && docker build . -t dj:latest \
                 && ../../operations/iptables.sh
-              'EOF2'
+            EOF2
             EOF
