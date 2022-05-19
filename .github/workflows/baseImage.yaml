@@ -22,7 +22,7 @@ jobs:
           sudo apt-get install sshpass -y
     - name: Copy Docker Build
       run: |
-            sshpass -p "${{ secrets.SSH_PAS }}" scp -r -o StrictHostKeyChecking=no ./backend/requirements.txt ./deploy/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.BASE_DIR_APP }}build/
+            sshpass -p "${{ secrets.SSH_PAS }}" scp -r -o StrictHostKeyChecking=no ./backend/requirements.txt ./deploy/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.BASE_DIR_APP }}build
     - name: Build Image
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
