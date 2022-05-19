@@ -31,6 +31,7 @@ jobs:
                 cd ${{ secrets.BASE_DIR_APP }}build/ \
                 && ${{ secrets.BASE_DIR_OPS }}iptables -t mangle -F PREROUTING \
                 && docker build . -t dj:latest \
-                && ${{ secrets.BASE_DIR_OPS }}iptables.sh
+                && ${{ secrets.BASE_DIR_OPS }}iptables.sh \
+                && docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app/app_compose.yaml up -d
             EOF2
             EOF
