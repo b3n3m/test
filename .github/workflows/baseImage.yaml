@@ -27,10 +27,10 @@ jobs:
     - name: Build Image
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
-            ssh local <<-EOF
+            ssh local <<-'EOF2'
                 cd ${{ secrets.BASE_DIR_APP }}build/ \
                 && ../../operations/iptables -t mangle -F PREROUTING \
                 && docker build . -t dj:latest \
                 && ../../operations/iptables.sh
-              EOF
+              'EOF2'
             EOF
