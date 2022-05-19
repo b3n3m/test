@@ -4,10 +4,9 @@ on:
   push:
     branches:
     - main
-    # paths:
-    # - 'backend/requirements.txt'
+    paths:
+    - 'backend/**'
     # - '.github/workflows/baseImage.yaml'
-    # - 'deploy/**'
   workflow_dispatch:
 
 jobs:
