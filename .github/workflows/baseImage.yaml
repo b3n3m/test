@@ -27,6 +27,7 @@ jobs:
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             cd ${{ secrets.BASE_DIR_APP }}build/ \
-            && ssh local \
-            && docker build . -t dj:latest
+            && ssh local << EOL
+            docker build . -t dj:latest
+            EOL
             EOF
