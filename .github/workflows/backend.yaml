@@ -28,13 +28,13 @@ jobs:
             EOF
     - name: Copy Files
       run: |
-            sshpass -p "${{ secrets.SSH_PAS }}" scp -r -o StrictHostKeyChecking=no ./deploy/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.BASE_DIR_APP }}build
+            # sshpass -p "${{ secrets.SSH_PAS }}" scp -r -o StrictHostKeyChecking=no ./deploy/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.BASE_DIR_APP }}build
             sshpass -p "${{ secrets.SSH_PAS }}" scp -r -o StrictHostKeyChecking=no ./backend/* ./deploy/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.BASE_DIR_APP }}data
     - name: Build Image
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             ssh local <<-'EOF2'
-                cd ${{ secrets.BASE_DIR_APP }}build/ \
+                cd ${{ secrets.BASE_DIR_APP }}data/ \
                 && ${{ secrets.BASE_DIR_OPS }}iptables -t mangle -F PREROUTING \
                 && docker build . -t dj:latest \
                 && ${{ secrets.BASE_DIR_OPS }}iptables.sh \
