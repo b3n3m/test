@@ -26,8 +26,8 @@ jobs:
     - name: Build Image
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
+            ssh local << EOL
             cd ${{ secrets.BASE_DIR_APP }}build/ \
-            && ssh local << EOL
-            docker build . -t dj:latest
+            && docker build . -t dj:latest
             EOL
             EOF
