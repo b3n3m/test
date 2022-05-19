@@ -16,18 +16,35 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install sshpass
+    # - name: Install sshpass
+    #   run: |
+    #       sudo apt-get update
+    #       sudo apt-get install sshpass -y
+    - name: Remove old files
       run: |
-          sudo apt-get update
-          sudo apt-get install sshpass -y
+            sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
+            rm -rf ${{ secrets.BASE_DIR_APP }}data/*
+            EOF
     - name: Copy Files
       run: |
-            sshpass -p "${{ secrets.SSH_PAS }}" scp -r -o StrictHostKeyChecking=no ./backend/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.BASE_DIR_APP }}data
+            sshpass -p "${{ secrets.SSH_PAS }}" scp -r -o StrictHostKeyChecking=no ./deploy/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.BASE_DIR_APP }}build
+            sshpass -p "${{ secrets.SSH_PAS }}" scp -r -o StrictHostKeyChecking=no ./backend/* ./deploy/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.BASE_DIR_APP }}data
+    - name: Build Image
+      run: |
+            sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
+            ssh local <<-'EOF2'
+                cd ${{ secrets.BASE_DIR_APP }}build/ \
+                && ${{ secrets.BASE_DIR_OPS }}iptables -t mangle -F PREROUTING \
+                && docker build . -t dj:latest \
+                && ${{ secrets.BASE_DIR_OPS }}iptables.sh \
+                && docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app/app_compose.yaml up -d
+            EOF2
+            EOF
     - name: Restart Service
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             ssh local <<-'EOF2'
-                docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app/app_compose.yaml up -d \
-                && docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app/app_compose.yaml restart
+                # docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app/app_compose.yaml up -d \
+                docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app/app_compose.yaml restart
             EOF2
             EOF

@@ -3,7 +3,6 @@ import { AuthContext } from "./AuthProvider";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Landing from "./pages/Landing";
 import ScenarioOverview from "./pages/ScenarioOverview";
-import SimulationAlternative from "./pages/SimulationAlternative";
 import UserOverview from "./pages/UserOverview";
 import Simulation from "./pages/Simulation";
 import Login from "./pages/Login";
@@ -11,6 +10,7 @@ import Help from "./pages/Help";
 import GDPR from "./pages/GDPR";
 import Imprint from "./pages/Imprint";
 import { getCookie } from "./utils/utils";
+import NotFoundPage from "./components/NotFoundPage";
 
 const Routing = () => {
     const { currentUser, setCurrentUser } = useContext(AuthContext)
@@ -18,7 +18,7 @@ const Routing = () => {
 
     const authenticateUser = async () => {
         try {
-            const res = await fetch(`{process.env.REACT_URL}/api/authenticated`, {
+            const res = await fetch(`http://localhost:8000/api/authenticated`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -54,6 +54,7 @@ const Routing = () => {
                 {/* routes which are accessible for every user */}
                 <Route path="/gdpr" element={<GDPR />} />
                 <Route path="/imprint" element={<Imprint />} />
+                <Route path="*" element={<NotFoundPage />} />
             </>
 
             {currentUser ?
@@ -61,8 +62,7 @@ const Routing = () => {
                     {/* routes which are accessible for every logged-in user */}
                     <Route path="/" element={<Landing />} />
                     <Route path="/scenarios" element={<ScenarioOverview />} />
-                    <Route path="/scenarios/:scn_id" element={<SimulationAlternative />} />
-                    <Route path="/simulation" element={<Simulation />} />
+                    <Route path="/scenarios/:scn_id" element={<Simulation />} />
                     <Route path="/help" element={<Help />} />
                     <Route path="/login" element={<Navigate to="/" replace />} />
                 </>

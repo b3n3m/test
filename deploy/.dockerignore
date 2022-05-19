@@ -1,5 +1,6 @@
 frontend/
 tests/
+database/
 .github/
 .git/
 Dockerfile
