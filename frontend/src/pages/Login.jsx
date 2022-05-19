@@ -48,7 +48,7 @@ const Login = () => {
     // Login API call
     async function login() {
         try {
-            const res = await fetch(`http://localhost:8000/api/login`, {
+            const res = await fetch(`{process.env.DJANGO_URL}/api/login`, {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify({ "username": userID, "password": userPassword }),
@@ -68,7 +68,7 @@ const Login = () => {
     async function getCRSF() {
         // get new unauthed token
         try {
-            await fetch(`http://localhost:8000/api/csrf-cookie`, {
+            await fetch(`{process.env.DJANGO_URL}/api/csrf-cookie`, {
                 method: 'GET',
                 credentials: 'include'
             })
