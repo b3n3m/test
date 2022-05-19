@@ -36,7 +36,7 @@ const Navbar = () => {
     async function handleLogout() {
         // send logout to backend --> deletes local sessionid cookie
         try {
-            const res = await fetch(`http://localhost:8000/api/logout`, {
+            const res = await fetch(`{process.env.REACT_URL}/api/logout`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
