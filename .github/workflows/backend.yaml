@@ -27,6 +27,6 @@ jobs:
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             ssh local <<-'EOF2'
-                docker-compose restart devMariaDB devDjangoApp
+                docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app_compose.yaml restart
             EOF2
             EOF
