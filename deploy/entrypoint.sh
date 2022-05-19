@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Collect static files
-echo "Collect static files"
-python /home/app/webapp/manage.py collectstatic --noinput
+# echo "Collect static files"
+# python /home/app/webapp/manage.py collectstatic --noinput
 
-echo "Create new Migrations"
-python /home/app/webapp/manage.py makemigrations
+# echo "Create new Migrations"
+# python /home/app/webapp/manage.py makemigrations
 
 # Apply database migrations
 echo "Apply database migrations"
