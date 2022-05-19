@@ -6,7 +6,7 @@ on:
     - main
     paths:
     - 'backend/**'
-    # - '.github/workflows/baseImage.yaml'
+    - '.github/workflows/backend.yaml'
   workflow_dispatch:
 
 jobs:
@@ -23,3 +23,10 @@ jobs:
     - name: Copy Files
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" scp -r -o StrictHostKeyChecking=no ./backend/* ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}}:${{ secrets.BASE_DIR_APP }}data
+    - name: Restart Service
+      run: |
+            sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
+            ssh local <<-'EOF2'
+                docker-compose -f ${{ BASE_DIR_OPS }}compose/app_compose.yaml restart
+            EOF2
+            EOF
