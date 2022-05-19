@@ -29,8 +29,8 @@ jobs:
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             ssh local <<-'EOF2'
                 cd ${{ secrets.BASE_DIR_APP }}build/ \
-                && ${{ secrets.BASE_DIR_APP }}iptables -t mangle -F PREROUTING \
+                && ${{ secrets.BASE_DIR_OPS }}iptables -t mangle -F PREROUTING \
                 && docker build . -t dj:latest \
-                && ${{ secrets.BASE_DIR_APP }}iptables.sh
+                && ${{ secrets.BASE_DIR_OPS }}iptables.sh
             EOF2
             EOF
