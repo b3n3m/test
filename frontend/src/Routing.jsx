@@ -18,7 +18,7 @@ const Routing = () => {
 
     const authenticateUser = async () => {
         try {
-            const res = await fetch(`{process.env.DJANGO_URL}/api/authenticated`, {
+            const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/authenticated`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -54,7 +54,6 @@ const Routing = () => {
                 {/* routes which are accessible for every user */}
                 <Route path="/gdpr" element={<GDPR />} />
                 <Route path="/imprint" element={<Imprint />} />
-                <Route path="*" element={<NotFoundPage />} />
             </>
 
             {currentUser ?
@@ -65,6 +64,7 @@ const Routing = () => {
                     <Route path="/scenarios/:scn_id" element={<Simulation />} />
                     <Route path="/help" element={<Help />} />
                     <Route path="/login" element={<Navigate to="/" replace />} />
+                    <Route path="*" element={<NotFoundPage />} />
                 </>
                 :
                 <>
