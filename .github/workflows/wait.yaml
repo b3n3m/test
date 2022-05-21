@@ -8,8 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.title == 'Demo' }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: ./
+    - uses: mktcode/consecutive-workflow-action@e2e008186aa210faacd68ec30f6ac236f7e2f435
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
 
