@@ -19,4 +19,4 @@ jobs:
     steps:
     - run: |
         echo "Previous workflow runs have completed!"
-        sleep 60
+        sleep 20
