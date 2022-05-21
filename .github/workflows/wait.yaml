@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.title == 'Demo' }}
     steps:
-    - uses: mktcode/consecutive-workflow-action@e2e008186aa210faacd68ec30f6ac236f7e2f435
+    - uses: mktcode/consecutive-workflow-action@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -19,4 +19,4 @@ jobs:
     steps:
     - run: |
         echo "Previous workflow runs have completed!"
-        sleep 20
+        sleep 15
