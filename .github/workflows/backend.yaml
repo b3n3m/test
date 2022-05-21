@@ -43,11 +43,3 @@ jobs:
             EOF2
             EOF
             
-    # - name: Restart Service
-    #   run: |
-    #         sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
-    #         ssh local <<-'EOF2'
-    #             # docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app/app_compose.yaml up -d \
-    #             docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app/app_compose.yaml restart
-    #         EOF2
-    #         EOF
