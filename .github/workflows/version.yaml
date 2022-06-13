@@ -45,7 +45,7 @@ jobs:
         # user_format_type: "json"
 
     - name: Version Check
-      run: echo ${{ steps.versioning.outputs.tag }}
+      run: echo "${{ steps.versioning.outputs }}
 
     - name: SHow folder
       run: ls -la
