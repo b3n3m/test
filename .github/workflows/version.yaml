@@ -45,3 +45,6 @@ jobs:
 
     - name: Version Check
       run: echo "${major}.${minor}.${patch}"
+
+    - name: SHow folder
+      run: ls -la
