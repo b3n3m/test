@@ -7,7 +7,7 @@ RUN groupadd -r djangoRUN && useradd --no-log-init -r -g djangoRUN djangoRUN
 COPY --chown=djangoRUN:djangoRUN ./backend/requirements.txt /home/app/webapp/
 RUN pip install -r /home/app/webapp/requirements.txt
 # Entrypoint
-COPY --chown=djangoRUN:djangoRUN ./entrypoint.sh /
+COPY --chown=djangoRUN:djangoRUN ./deploy/entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 USER djangoRUN
 EXPOSE 8000
