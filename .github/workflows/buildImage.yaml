@@ -1,0 +1,23 @@
+name: Build Image
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'backend/**'
+    - '.github/workflows/buildImage.yaml'
+    - 'deploy/*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and Publish head Docker image
+    
+    steps:
+    - uses: VaultVulp/gp-docker-action@1.2.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
+        image-name: my-cool-service # Provide Docker image name
+        build-context: ./dev # Provide path to the folder with the Dockerfile
