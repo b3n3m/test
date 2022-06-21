@@ -35,5 +35,5 @@ jobs:
         github-push-secret: ${{secrets.GITHUB_TOKEN}}
         docker-image-name: bmo-test
         # docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
-        dockerfile-path: ./deploy/Dockerfile # optional
-        build-context: ./backend # optional
+        # dockerfile-path: ./deploy/Dockerfile # optional
+        # build-context: ./backend/ # optional
