@@ -27,4 +27,4 @@ jobs:
         image-name: bmo-test #:${{ steps.cutSHA.outputs.sha7 }} # Provide Docker image name
         image-tag: head
         # extract-git-tag: true # Provide flag to extract Docker image tag from git reference
-        build-context: ./deploy # Provide path to the folder with the Dockerfile
+        # build-context: ./deploy # Provide path to the folder with the Dockerfile
