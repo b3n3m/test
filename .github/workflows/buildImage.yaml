@@ -17,9 +17,9 @@ jobs:
     
     steps:
 
-    - name: Get short SHA
-      id: cutSHA
-      run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
+    # - name: Get short SHA
+    #   id: cutSHA
+    #   run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
 
     # - uses: VaultVulp/gp-docker-action@1.2.0
     #   with:
@@ -34,6 +34,6 @@ jobs:
       with:
         github-push-secret: ${{secrets.GITHUB_TOKEN}}
         docker-image-name: bmo-test
-        docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
+        # docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
         dockerfile-path: ./deploy/Dockerfile # optional
         build-context: ./backend # optional
