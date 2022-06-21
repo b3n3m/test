@@ -17,14 +17,23 @@ jobs:
     
     steps:
 
-    # - name: Get short SHA
-    #   id: cutSHA
-    #   run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
+    - name: Get short SHA
+      id: cutSHA
+      run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
 
-    - uses: VaultVulp/gp-docker-action@1.2.0
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
-        image-name: bmo-test #:${{ steps.cutSHA.outputs.sha7 }} # Provide Docker image name
-        image-tag: head
+    # - uses: VaultVulp/gp-docker-action@1.2.0
+    #   with:
+    #     github-token: ${{ secrets.GITHUB_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
+    #     image-name: bmo-test #:${{ steps.cutSHA.outputs.sha7 }} # Provide Docker image name
+    #     image-tag: head
         # extract-git-tag: true # Provide flag to extract Docker image tag from git reference
         # build-context: ./deploy # Provide path to the folder with the Dockerfile
+    
+      - uses: pmorelli92/github-container-registry-build-push@2.0.0
+        name: Build and Publish latest service image
+        with:
+          github-push-secret: ${{secrets.GITHUB_TOKEN}}
+          docker-image-name: bmo-test
+          docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
+          dockerfile-path: ./deploy/Dockerfile # optional
+          build-context: ./backend # optional
