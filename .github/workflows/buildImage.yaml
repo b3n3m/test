@@ -62,13 +62,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Check / set env Dev
+      run: |
+            echo "DIR=DEV" >> $GITHUB_ENV
+            echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_DEV }}" >> $GITHUB_ENV
+            echo "CI=false" >> $GITHUB_ENV
+
     - uses: actions/setup-node@v3
       with:
         node-version: '16'
     - name: Compile Frontend
       run: |
-            echo "CI=false" >> $GITHUB_ENV
-            echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_DEV }}" >> $GITHUB_ENV
             cd frontend
             npm ci --legacy-peer-deps
             npm run build
