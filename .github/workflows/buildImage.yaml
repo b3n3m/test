@@ -53,22 +53,22 @@ jobs:
   #       dockerfile-path: ./DockerfileBackend # optional
   #       # build-context: ./backend/ # optional
   
-  # frontend:
-  #   runs-on: ubuntu-latest
-  #   name: Build Frontend
-  #   needs:
-  #   - version
+  frontend:
+    runs-on: ubuntu-latest
+    name: Build Frontend
+    needs:
+    - version
 
-  #   - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-  #   - uses: actions/setup-node@v3
-  #     with:
-  #       node-version: '16'
-  #   - name: Compile Frontend
-  #     run: |
-  #           cd frontend
-  #           npm ci
-  #           npm run build
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+    - name: Compile Frontend
+      run: |
+            cd frontend
+            npm ci
+            npm run build
 
   #   - uses: pmorelli92/github-container-registry-build-push@2.0.0
   #     name: Build and Publish latest service image
