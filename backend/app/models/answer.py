@@ -1,17 +1,16 @@
 from django.db import models
 
-from app.models.action import Action
+from app.models.question import Question
 
 
 class Answer(models.Model):
 
     id = models.AutoField(primary_key=True)
     label = models.TextField(default="answer")
-    points = models.PositiveIntegerField(default=0)
-    active = models.BooleanField(default=False)
+    points = models.IntegerField(default=0)
 
-    action = models.ForeignKey(
-        Action,
+    question = models.ForeignKey(
+        Question,
         on_delete=models.CASCADE,
         related_name="answers",
         blank=True,

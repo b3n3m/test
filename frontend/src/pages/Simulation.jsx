@@ -4,34 +4,86 @@ import {
     BreadcrumbItem,
     BreadcrumbLink,
     Button,
-    Container, Flex,
+    Container,
+    Flex,
+    Grid,
+    GridItem,
     Heading,
     Modal,
     ModalBody,
-    ModalCloseButton,
     ModalContent,
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Text,
+    Skeleton,
+    Spacer,
+    Tooltip,
     useDisclosure,
-    Grid,
-    GridItem,
-    Stack,
-    Radio,
-    RadioGroup,
-    Spacer
 } from "@chakra-ui/react";
-import { HiChevronRight } from "react-icons/hi";
-import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import {HiChevronRight} from "react-icons/hi";
+import {useEffect, useState} from "react";
+import {Link, useLocation} from "react-router-dom";
+import Question from "../components/Simulation/Actions/Question";
+import Action from "../components/Simulation/Actions/Action"
+import ModelSelection from '../components/ModelSelection'
+import Skilltype from "../components/Simulation/Actions/Skilltype"
+import Result from "../components/Simulation/Result/Result"
+import {getCookie} from "../utils/utils"
+import Dashboard from "../components/Simulation/Dashboard/Dashboard";
+import MarkdownDisplay from "../components/MarkdownDisplay";
 
 const Simulation = () => {
     const [userScenario, setUserScenario] = useState({});
 
     const location = useLocation();
 
+    // scenario template data
+    const { state } = useLocation();
+
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isStoryOpen , onOpen: onStoryOpen, onClose: onStoryClose } = useDisclosure();
+
+    // current simulation play id
+    const [currentSimID, setCurrentSimID] = useState()
+
+    // current simulation type (eg. model, question, segment, event)
+    const [currentType, setCurrentType] = useState()
+
+    // validation status of user selected data
+    const [dataValidationStatus, setDataValidationStatus] = useState(false)
+
+    // values for simulation
+    const [simValues, setSimValues] = useState({})
+
+    // sim values before
+    const [simValuesBefore, setSimValuesBefore] = useState({})
+
+    const [story, setStory] = useState("")
+
+    // contains all values from next endpoint
+    const [scenarioValues, setScenarioValues] = useState({})
+
+    // contains the values that should be sent to the next endpoint
+    const [returnValues, setReturnValues] = useState();
+
+    const [scenarioIsLoading, setScenarioIsLoading] = useState(true);
+
+    const [nextIsLoading, setNextIsLoading] = useState(false);
+
+    // rerender function for actions
+    const [rerender, setRerender] = useState(0);
+
+    // rerender function for skilltypes
+    const [rerenderSkill, setRerenderSkill] = useState(0);
+
+    // define simulation fragment values
+    const [simFragmentActions, setSimFragmentActions] = useState();
+
+    // save all available skilltypes
+    const [skillTypes, setSkillTypes] = useState([])
+
+    // save skilltype return object
+    const [skillTypeReturn, setSkillTypeReturn] = useState([])
 
     const fetchUserScenario = () => {
         const userScenarioMock = {
@@ -46,157 +98,395 @@ const Simulation = () => {
         return newUrl;
     }
 
+    async function handleSelection(event) {
+        if (currentType === 'MODEL') {
+            setReturnValues({
+                scenario_id: currentSimID,
+                type: currentType,
+                model: event
+            })
+            setDataValidationStatus(true)
+        } else if (currentType === 'QUESTION') {
+            const tempReturnValues = {
+                scenario_id: currentSimID,
+                type: currentType,
+                question_collection: event
+            }
+            setReturnValues(tempReturnValues)
+            setDataValidationStatus(true)
+        } else if (currentType === 'SIMULATION') {
+            var tempSimFragmentActions = simFragmentActions
+
+            // write new value into action fragment
+            tempSimFragmentActions[event.type] = event.value
+
+            // set fragment state
+            setSimFragmentActions(tempSimFragmentActions)
+
+            const tempReturnValues = {
+                scenario_id: currentSimID,
+                type: currentType,
+                actions: tempSimFragmentActions,
+                members: skillTypeReturn
+            }
+
+            setReturnValues(tempReturnValues)
+            setDataValidationStatus(true)
+        }
+    }
+
+    function createSkillTypeObject(skillTypesList) {
+        // create list that can be returned to next endpoint
+        var list = []
+        for (const type of skillTypesList) {
+            list.push(
+                {
+                    "skill_type": type,
+                    "change": 0
+                }
+            )
+        }
+        // set state
+        setSkillTypeReturn(list)
+        return list
+    }
+
+    function resetSkillTypeObject() {
+        // reset change values for each skill type, required for displaying on frontend after clicking next
+        var tempSKillTypeList = skillTypeReturn
+        for (const type in tempSKillTypeList) {
+            tempSKillTypeList[type].change = 0
+        }
+
+        setSkillTypeReturn(tempSKillTypeList)
+    }
+
+    function updateSkillTypeObject(skill, value) {
+        // get index of skill that will be updates
+        const skillIndex = skillTypeReturn.findIndex(object => {
+            return object.skill_type === skill;
+        });
+
+        // create temporary object to overwrite current one
+        var tempSkillTypeReturn = skillTypeReturn
+
+        // update change value
+        tempSkillTypeReturn[skillIndex].change = tempSkillTypeReturn[skillIndex].change + value
+
+        // update state
+        setSkillTypeReturn(tempSkillTypeReturn)
+        setRerenderSkill(rerenderSkill + 50)
+    }
+
+    function getSkillTypeCount(skill) {
+        var skillTypeCount = 0
+        for (const type of simValues.members) {
+            if (type.skill_type.name === skill) {
+                skillTypeCount = skillTypeCount + 1
+            }
+        }
+        return skillTypeCount
+    }
+
+    async function startScenario() {
+        try {
+            const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/sim/start`, {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify({ "template-id": state.id, "config-id": 1 }),
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "Content-Type": "application/json"
+                },
+            })
+
+            const scenario = await res.json()
+            setCurrentSimID(scenario.data.id)
+            await handleNext(scenario.data.id)
+            setScenarioIsLoading(false)
+
+            // get skilltypes
+            const resSkill = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/skill-type`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "Content-Type": "application/json"
+                },
+            })
+
+            var skillTypesList = []
+
+            const resSkillReturn = await resSkill.json()
+
+            for (const type of resSkillReturn.data) {
+                skillTypesList.push(type.name)
+            }
+
+            setSkillTypes(skillTypesList)
+            createSkillTypeObject(skillTypesList)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    async function handleNext(simID) {
+        setNextIsLoading(true)
+        setDataValidationStatus(false)
+        var nextValues = {}
+        if (returnValues === undefined) {
+            nextValues = { "scenario_id": simID, "type": "START" }
+        } else {
+            nextValues = returnValues
+        }
+        try {
+            const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/sim/next`, {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify(nextValues),
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "Content-Type": "application/json"
+                },
+            })
+
+            const nextData = await res.json()
+            console.log('NextData:', nextData)
+            // set type
+            setCurrentType(nextData.type)
+            // set data
+            if (nextData.type === 'QUESTION') {
+                setSimValues(nextData)
+                setDataValidationStatus(true)
+            } else if (nextData.type === 'MODEL') {
+                setSimValues(nextData)
+            } else if (nextData.type === 'SIMULATION') {
+                setSimValues(nextData)
+                setDataValidationStatus(true)
+                let tempActions = {}
+
+                // get all actions from next data object
+                for (const action of nextData.actions) {
+                    if (action.action === 'bugfix') {
+                        tempActions.bugfix = false
+                    } else if (action.action === 'unittest') {
+                        tempActions.unittest = false
+                    } else if (action.action === 'integrationtest') {
+                        tempActions.integrationtest = false
+                    } else if (action.action === 'meetings') {
+                        tempActions.meetings = action.lower_limit
+                    } else if (action.action === 'teamevent') {
+                        tempActions.teamevent = false
+                    } else if (action.action === 'training') {
+                        tempActions.training = action.lower_limit
+                    } else if (action.action === 'salary') {
+                        tempActions.salary = 1
+                    } else if (action.action === 'overtime') {
+                        tempActions.overtime = 0
+                    }
+                }
+
+                // set action values with default values
+                setSimFragmentActions(tempActions)
+
+                const tempReturnValues = {
+                    scenario_id: simID,
+                    type: nextData.type,
+                    actions: tempActions,
+                    members: skillTypeReturn
+                }
+                setReturnValues(tempReturnValues)
+
+                // quick and dirty solution for rerendering, please don't judge
+                resetSkillTypeObject()
+                setRerender(rerender + 20)
+                setRerenderSkill(rerenderSkill + 50)
+            } else if (nextData.type === 'EVENT') {
+                setDataValidationStatus(true)
+                setSimValues(nextData)
+            } else if (nextData.type === 'RESULT') {
+                setDataValidationStatus(true)
+                setSimValues(nextData)
+            }
+
+            // set overall scenario values
+            setScenarioValues(nextData)
+            setNextIsLoading(false)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     useEffect(() => {
+        console.log("TS", state)
+        setStory(state.story)
         fetchUserScenario();
         onOpen();
     }, [onOpen]);
 
+    useEffect(() => {
+        console.log('currentSimID', currentSimID)
+    }, [currentSimID]);
+
+    useEffect(() => {
+        setSimValuesBefore(simValues)
+        // open story only if there is a story and if it is not the same story as before
+        if(simValues.text && simValues.text !== simValuesBefore.text) {
+            onStoryOpen();
+            setStory(story +  "\n" + simValues.text)
+        }
+
+    }, [simValues])
     return (
         <>
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            <Modal isOpen={isOpen} closeOnOverlayClick={false} isCentered size="3xl">
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Modal Title</ModalHeader>
-                    <ModalCloseButton />
+                    <ModalHeader>Story</ModalHeader>
                     <ModalBody>
-                        <Text>Scenario Description Here</Text>
+                        <MarkdownDisplay markdownText={story}/>
                     </ModalBody>
 
-                    <ModalFooter>
-                        <Button colorScheme='blue' mr={3} onClick={onClose}>
-                            Start
+                    <ModalFooter gap={5}>
+                        <Button colorScheme="blue" variant="ghost" as={Link} to="/scenarios">
+                            Cancel
+                        </Button>
+                        <Button colorScheme='blue' onClick={() => { onClose(); startScenario() }}>
+                            Start Simulation
                         </Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            <Flex px={10} pt={2} flexDir="column" flexGrow={1}>
+
+            <Modal isOpen={isStoryOpen} isCentered size="3xl" closeOnOverlayClick={true}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Story</ModalHeader>
+                    <ModalBody>
+                        <MarkdownDisplay markdownText={simValues.text} />
+                    </ModalBody>
+                    <ModalFooter gap={5}>
+                        <Button colorScheme='blue' onClick={onStoryClose}>
+                            Close Story
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+
+            <Flex px={10} pt={2} flexDir="column" flexGrow={0}>
                 <Breadcrumb spacing='8px' separator={<HiChevronRight color='gray.500' />}>
                     <BreadcrumbItem>
                         <BreadcrumbLink as={Link} to={scenarioPath()}>Scenarios</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbItem>
-                        <BreadcrumbLink href=''>{userScenario.scn_name}</BreadcrumbLink>
+                        <BreadcrumbLink href=''>{state.name}</BreadcrumbLink>
                     </BreadcrumbItem>
                 </Breadcrumb>
                 <Flex flexDir="column" flexGrow={1}>
-                    <Heading p='5'>Active Scenario: {userScenario.scn_name}</Heading>
-                    <Container maxW='container.2xl'>
-                        <Flex>
-                            <Box w='60%'>
-                                <Grid
-                                    h='100%'
-                                    templateRows='repeat(2, 1fr)'
-                                    templateColumns='repeat(5, 1fr)'
-                                    gap={4}
-                                    textAlign='center'
-                                    fontWeight='bold'
-                                    color='white'
-                                >
-                                    <GridItem rowSpan={2} _hover={{ boxShadow: '2xl' }} colSpan={1} boxShadow='md' rounded='md' bg='blue.300'> Tasks</GridItem>
-                                    <GridItem colSpan={2} _hover={{ boxShadow: '2xl' }} boxShadow='md' rounded='md' bg='blue.800'>Progress Graph</GridItem>
-                                    <GridItem colSpan={2} _hover={{ boxShadow: '2xl' }} boxShadow='md' rounded='md' bg='blue.100'>Employees</GridItem>
-                                    <GridItem colSpan={4} _hover={{ boxShadow: '2xl' }} boxShadow='md' rounded='md' bg='blue.700'>Stress Level</GridItem>
-                                </Grid>
-                            </Box>
-                            <Spacer />
-                            <Box
+                    <Heading p='5'>Active Scenario: {state.name}</Heading>
+
+                    <Container maxW='container.2xl' h='full'>
+                        <Flex h='full'>
+                            {scenarioIsLoading ? <Skeleton height='80vh' w="full" borderRadius="2xl"/> :
+                                <>
+                                <Box w='62%'>
+                                    <Dashboard templateScenario={state} data={simValues} story={story}/>
+                                </Box>
+                                <Spacer />
+                            {/* right side of simulation studio */}
+                                <Box
                                 p='3'
-                                w='38%'
-                                boxShadow='md'
-                                rounded='md'
-                                bg='gray.400'
+                                w='36%'
+                                h='full'
+                                borderRadius="2xl"
+                                bg='white'
                                 textAlign='center'
-                            >
+                                >
                                 <p>
-                                    <b>Actions</b>
+                            {/* change heading depending on dataset */}
+                                <Heading size="lg" mt={3}>
+                            {
+                                currentType === 'QUESTION' ? 'Questions' :
+                                currentType === 'SIMULATION' ? 'Actions' :
+                                currentType === 'MODEL' ? 'Model Selection' :
+                                currentType === 'EVENT' ? 'Event' :
+                                currentType === 'RESULT' ? 'Result' : ''
+                            }
+                                </Heading>
                                 </p>
                                 <Grid
-                                    templateRows='repeat(4, 1fr)'
-                                    templateColumns='repeat(3, 1fr)'
-                                    gap={4}
-                                    p='5'
-                                    justify="flex-end"
+                                gap={4}
+                                p='5'
+                                justify="flex-end"
                                 >
-                                    <GridItem colSpan={3} _hover={{ boxShadow: '2xl' }} boxShadow='md' rounded='md' bg='gray.100' m='2'>
-                                        <Grid>
-                                            <GridItem colSpan={3} rounded='md' bg='gray.100' p='2'> <b>Hier steht eine Frage</b> </GridItem>
-                                            <RadioGroup defaultValue='1'>
-                                                <Stack spacing={4} direction='row' p='2' justify='flex-end'>
-                                                    <Radio value='1'>
-                                                        Answer 1
-                                                    </Radio>
-                                                    <Radio value='2'>
-                                                        Answer 2
-                                                    </Radio>
-                                                    <Radio value='3'>
-                                                        Answer 3
-                                                    </Radio>
-                                                </Stack>
-                                            </RadioGroup>
-                                        </Grid>
-                                    </GridItem>
-                                    <GridItem colSpan={3} _hover={{ boxShadow: '2xl' }} boxShadow='md' rounded='md' bg='gray.100' m='2'>
-                                        <Grid>
-                                            <GridItem colSpan={3} rounded='md' bg='gray.100' p='2'> <b>Hier steht eine Frage</b> </GridItem>
-                                            <RadioGroup defaultValue='1'>
-                                                <Stack spacing={4} direction='row' p='2' justify='flex-end'>
-                                                    <Radio value='1'>
-                                                        Answer 1
-                                                    </Radio>
-                                                    <Radio value='2'>
-                                                        Answer 2
-                                                    </Radio>
-                                                    <Radio value='3'>
-                                                        Answer 3
-                                                    </Radio>
-                                                </Stack>
-                                            </RadioGroup>
-                                        </Grid>
-                                    </GridItem>
-                                    <GridItem colSpan={3} _hover={{ boxShadow: '2xl' }} boxShadow='md' rounded='md' bg='gray.100' m='2'>
-                                        <Grid>
-                                            <GridItem colSpan={3} rounded='md' bg='gray.100' p='2'> <b>Hier steht eine Frage</b> </GridItem>
-                                            <RadioGroup defaultValue='1'>
-                                                <Stack spacing={4} direction='row' p='2' justify='flex-end'>
-                                                    <Radio value='1'>
-                                                        Answer 1
-                                                    </Radio>
-                                                    <Radio value='2'>
-                                                        Answer 2
-                                                    </Radio>
-                                                    <Radio value='3'>
-                                                        Answer 3
-                                                    </Radio>
-                                                </Stack>
-                                            </RadioGroup>
-                                        </Grid>
-                                    </GridItem>
-                                    <GridItem colSpan={3} _hover={{ boxShadow: '2xl' }} boxShadow='md' rounded='md' bg='gray.100' m='2'>
-                                        <Grid>
-                                            <GridItem colSpan={3} rounded='md' bg='gray.100' p='2'> <b>Hier steht eine Frage</b> </GridItem>
-                                            <RadioGroup defaultValue='1'>
-                                                <Stack spacing={4} direction='row' p='2' justify='flex-end'>
-                                                    <Radio value='1'>
-                                                        Answer 1
-                                                    </Radio>
-                                                    <Radio value='2'>
-                                                        Answer 2
-                                                    </Radio>
-                                                    <Radio value='3'>
-                                                        Answer 3
-                                                    </Radio>
-                                                </Stack>
-                                            </RadioGroup>
-                                        </Grid>
-                                    </GridItem>
-
-                                    <GridItem colSpan={2} />
-                                    <GridItem colSpan={1}  >
-                                        <Button colorScheme='blue' size='lg'>
-                                            Next Week
-                                        </Button> </GridItem>
+                            {/* Question Collection */}
+                            {currentType === 'QUESTION' ?
+                                <>
+                                <Question onSelect={(event) => handleSelection(event)}
+                                question_collection={simValues.question_collection}
+                                />
+                                </>
+                                : <></>
+                            }
+                            {/* Simulation Fragment */}
+                            {currentType === 'SIMULATION' ?
+                                <>
+                                <Tooltip label="Add tooltip here" aria-label='A tooltip' placement="top">
+                                <Heading size="sm">Employees</Heading>
+                                </Tooltip>
+                                <Grid templateColumns='repeat(2, 1fr)' gap={2}>
+                            {skillTypeReturn.map((skilltype, index) => {
+                                return <Skilltype key={index + rerenderSkill}
+                                onUpdateChange={(event) => {updateSkillTypeObject(event.name, event.value)}}
+                                skillTypeName={skilltype.skill_type}
+                                currentCount={getSkillTypeCount(skilltype.skill_type)}
+                                countChange={skilltype.change} />
+                            })}
                                 </Grid>
-                            </Box>
+                            {simValues.actions.map((action, index) => {
+                                return <Action onSelectAction={(event) => handleSelection(event)} key={index + rerender} action={action} />
+                            })}
+                                </>
+                                : <></>
+                            }
+                            {/* Model Selection */}
+                            {currentType === 'MODEL' ?
+                                <>
+                                <ModelSelection onSelectModel={(event) => handleSelection(event)} models={simValues.models} />
+                                </>
+                                : <></>
+                            }
+                            {/* Event */}
+                            {currentType === 'EVENT' ?
+                                <>
+                                </>
+                                : <></>
+                            }
+                            {currentType === 'RESULT' ?
+                                <>
+                                <Result resultParams={simValues} />
+                                </>
+                                : <></>
+                            }
+                                <GridItem colSpan={1}>
+                            {currentType === 'RESULT' ?
+                                <>
+                                <Button colorScheme="blue" size='lg' mt={3}>
+                                <Link to={{pathname: "/"}} >Finish</Link>
+                                </Button>
+                                </>
+                                : <Button onClick={() => {dataValidationStatus ? handleNext(currentSimID, skillTypes) : console.log('data status:', dataValidationStatus)}}
+                                colorScheme={dataValidationStatus ? 'blue' : 'gray'} size='lg' mt={3} isLoading={nextIsLoading}>
+                            {currentType === 'SIMULATION' ? 'Next Week' : 'Next'}
+                                </Button>
+                            }
+
+                                </GridItem>
+                                </Grid>
+                                </Box>
+                                </>
+                            }
                         </Flex >
                     </Container >
                 </Flex>

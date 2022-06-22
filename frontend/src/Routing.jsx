@@ -6,11 +6,13 @@ import ScenarioOverview from "./pages/ScenarioOverview";
 import UserOverview from "./pages/UserOverview";
 import Simulation from "./pages/Simulation";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Help from "./pages/Help";
 import GDPR from "./pages/GDPR";
 import Imprint from "./pages/Imprint";
 import { getCookie } from "./utils/utils";
 import NotFoundPage from "./components/NotFoundPage";
+import ScenarioStudio from "./pages/ScenarioStudio";
 
 const Routing = () => {
     const { currentUser, setCurrentUser } = useContext(AuthContext)
@@ -22,7 +24,7 @@ const Routing = () => {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
-                    "X-CSRFToken": getCookie("csrftoken"),
+                    // "X-CSRFToken": getCookie("csrftoken"),
                     "Content-Type": "application/json"
                 },
             })
@@ -59,10 +61,11 @@ const Routing = () => {
             {currentUser ?
                 <>
                     {/* routes which are accessible for every logged-in user */}
-                    <Route path="/" element={<Landing />} />
+                    <Route path="/" element={<Navigate to="/scenarios" replace />} />
                     <Route path="/scenarios" element={<ScenarioOverview />} />
                     <Route path="/scenarios/:scn_id" element={<Simulation />} />
                     <Route path="/help" element={<Help />} />
+                    <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Navigate to="/" replace />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </>
@@ -72,7 +75,9 @@ const Routing = () => {
                     {
                         !isAuthenticating &&
                         <>
+                            <Route path="/" element={<Landing />} />
                             <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
                             <Route path="*" element={<Navigate to="/login" replace />} />
                         </>
                     }
@@ -83,6 +88,7 @@ const Routing = () => {
                 currentUser?.creator &&
                 <>
                     {/* adding routes which are accessible for every logged-in user with role creator */}
+                    <Route path="/scenario-studio" element={<ScenarioStudio />} />
                 </>
             }
             {

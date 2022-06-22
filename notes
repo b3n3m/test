@@ -1,0 +1,24 @@
+Jun 11 21:48:30 fb2-sim-pm systemd[1]: Starting A high performance web server and a reverse proxy server...
+Jun 11 21:48:30 fb2-sim-pm nginx[550]: nginx: [emerg] host not found in upstream "localhost" in /etc/nginx/sites-enabled/uas.bspace.x>
+Jun 11 21:48:30 fb2-sim-pm nginx[550]: nginx: configuration file /etc/nginx/nginx.conf test failed
+Jun 11 21:48:30 fb2-sim-pm systemd[1]: nginx.service: Control process exited, code=exited, status=1/FAILURE
+Jun 11 21:48:30 fb2-sim-pm systemd[1]: nginx.service: Failed with result 'exit-code'.
+Jun 11 21:48:30 fb2-sim-pm systemd[1]: Failed to start A high performance web server and a reverse proxy server.
+
+
+
+stunden pro woche pro tasks
+
+breakdown chart -> was sind must have open points
+
+
+cosecutiveness
+build frontend | build backend -> push images
+create version tag
+rollout PP
+testing
+rollout Prod
+
+https://www.frankfurt-university.de/de/hochschule/fachbereich-2-informatik-und-ingenieurwissenschaften/einrichtungen-services/bscw-plattform/bscw-weblaufwerk/
+
+https://www.ostc.de/howtos/logrotate-HOWTO.html

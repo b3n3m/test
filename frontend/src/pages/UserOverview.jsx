@@ -22,11 +22,13 @@ import {
     Thead,
     Tr,
     useDisclosure,
-    useToast
+    useToast,
+    Divider,
 } from "@chakra-ui/react";
 import {HiChevronRight, HiOutlineCheck, HiOutlineTrash, HiOutlineX} from "react-icons/hi";
 import {useEffect, useRef, useState} from "react";
 import {getCookie, role} from "../utils/utils";
+import AddUser from "../components/AddUser";
 
 const UserOverview = () => {
     const [users, setUsers] = useState([]);
@@ -35,16 +37,11 @@ const UserOverview = () => {
 
     const toast = useToast()
 
-    // const role = {
-    //     ADMIN: "admin",
-    //     STAFF: "staff",
-    //     CREATOR: "creator",
-    //     STUDENT: "student"
-    // }
-
     const { isOpen: isRoleOpen, onOpen: onRoleOpen, onClose:  onRoleClose} = useDisclosure()
     const { isOpen: isDeleteOpen , onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
     const cancelRef = useRef();
+    
+   
 
     const fetchUsers = async () => {
         const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/user`, {
@@ -85,6 +82,8 @@ const UserOverview = () => {
         }
     };
 
+   
+
     const toggleRole = async (username) => {
         try {
             const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/user/${username}`, {
@@ -100,7 +99,7 @@ const UserOverview = () => {
             fetchUsers();
         } catch (e) {
             toast({
-                title: `Could not change role ${role}`,
+                title: `Could not change role ${roleToChange.role}`,
                 status: 'error',
                 duration: 5000,
             });
@@ -127,7 +126,7 @@ const UserOverview = () => {
             <Heading>Users</Heading>
             <Box h={5}></Box>
             <Box backgroundColor="white" borderRadius="2xl" minH="60vh">
-                <Container maxW='4xl' pt={10}>
+                <Container maxW='6xl' pt={10}>
                     <TableContainer>
                         <Table variant='simple' size="lg">
                             <Thead>
@@ -229,6 +228,8 @@ const UserOverview = () => {
                             </Tbody>
                         </Table>
                     </TableContainer>
+                   <Divider />
+                   <AddUser />
                 </Container>
             </Box>
 
@@ -243,11 +244,11 @@ const UserOverview = () => {
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-                            Delete user {selectedUser}
+                            Delete user
                         </AlertDialogHeader>
 
                         <AlertDialogBody>
-                            Are you sure? You can't undo this action afterwards.
+                            Are you sure that you want to delete {selectedUser}? You can't undo this action afterwards.
                         </AlertDialogBody>
 
                         <AlertDialogFooter>
@@ -280,7 +281,7 @@ const UserOverview = () => {
                         </AlertDialogHeader>
 
                         <AlertDialogBody>
-                            Are you sure that you want to change a role?
+                            Are you sure that you want to change role {roleToChange.role} of {selectedUser}?
                         </AlertDialogBody>
 
                         <AlertDialogFooter>
