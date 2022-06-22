@@ -44,13 +44,13 @@ jobs:
   #       # extract-git-tag: true # Provide flag to extract Docker image tag from git reference
   #       # build-context: ./deploy # Provide path to the folder with the Dockerfile
     
-  #   - uses: pmorelli92/github-container-registry-build-push@2.0.0
-  #     name: Build and Publish latest service image
-  #     with:
-  #       github-push-secret: ${{secrets.GITHUB_TOKEN}}
-  #       docker-image-name: bmo-test-back
-  #       docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
-  #       dockerfile-path: ./DockerfileBackend # optional
+    - uses: pmorelli92/github-container-registry-build-push@2.0.0
+      name: Build and Publish latest service image
+      with:
+        github-push-secret: ${{secrets.GITHUB_TOKEN}}
+        docker-image-name: bmo-test-back
+        docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
+        dockerfile-path: ./DockerfileBackend # optional
   #       # build-context: ./backend/ # optional
   
   frontend:
@@ -77,13 +77,13 @@ jobs:
             npm ci --legacy-peer-deps
             npm run build
 
-  #   - uses: pmorelli92/github-container-registry-build-push@2.0.0
-  #     name: Build and Publish latest service image
-  #     with:
-  #       github-push-secret: ${{secrets.GITHUB_TOKEN}}
-  #       docker-image-name: bmo-test-back
-  #       docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
-  #       dockerfile-path: ./DockerfileFrontend # optional
+    - uses: pmorelli92/github-container-registry-build-push@2.0.0
+      name: Build and Publish latest service image
+      with:
+        github-push-secret: ${{secrets.GITHUB_TOKEN}}
+        docker-image-name: bmo-test-back
+        docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
+        dockerfile-path: ./DockerfileFrontend # optional
   #       # build-context: ./backend/ # optional
   
   deployPreProd:
