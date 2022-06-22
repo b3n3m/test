@@ -53,65 +53,65 @@ jobs:
         dockerfile-path: ./DockerfileBackend # optional
   #       # build-context: ./backend/ # optional
   
-  frontend:
-    runs-on: ubuntu-latest
-    name: Build Frontend
-    needs:
-    - version
+  # frontend:
+  #   runs-on: ubuntu-latest
+  #   name: Build Frontend
+  #   needs:
+  #   - version
 
-    steps:
-    - uses: actions/checkout@v3
+  #   steps:
+  #   - uses: actions/checkout@v3
 
-    - name: Check / set env Dev
-      run: |
-            echo "DIR=DEV" >> $GITHUB_ENV
-            echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_DEV }}" >> $GITHUB_ENV
-            echo "CI=false" >> $GITHUB_ENV
+  #   - name: Check / set env Dev
+  #     run: |
+  #           echo "DIR=DEV" >> $GITHUB_ENV
+  #           echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_DEV }}" >> $GITHUB_ENV
+  #           echo "CI=false" >> $GITHUB_ENV
 
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-    - name: Compile Frontend
-      run: |
-            cd frontend
-            npm ci --legacy-peer-deps
-            npm run build
+  #   - uses: actions/setup-node@v3
+  #     with:
+  #       node-version: '16'
+  #   - name: Compile Frontend
+  #     run: |
+  #           cd frontend
+  #           npm ci --legacy-peer-deps
+  #           npm run build
 
-    - uses: pmorelli92/github-container-registry-build-push@2.0.0
-      name: Build and Publish latest service image
-      with:
-        github-push-secret: ${{secrets.GITHUB_TOKEN}}
-        docker-image-name: bmo-test-back
-        docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
-        dockerfile-path: ./DockerfileFrontend # optional
-  #       # build-context: ./backend/ # optional
+  #   - uses: pmorelli92/github-container-registry-build-push@2.0.0
+  #     name: Build and Publish latest service image
+  #     with:
+  #       github-push-secret: ${{secrets.GITHUB_TOKEN}}
+  #       docker-image-name: bmo-test-back
+  #       docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
+  #       dockerfile-path: ./DockerfileFrontend # optional
+  # #       # build-context: ./backend/ # optional
   
-  deployPreProd:
-    runs-on: ubuntu-latest
-    name: Deploy PreProd
-    needs:
-    - backend
-    - frontend
+  # deployPreProd:
+  #   runs-on: ubuntu-latest
+  #   name: Deploy PreProd
+  #   needs:
+  #   - backend
+  #   - frontend
 
-    steps:
-    - name: Make THINGS
-      run: echo "Hello World"
+  #   steps:
+  #   - name: Make THINGS
+  #     run: echo "Hello World"
   
-  tests:
-    runs-on: ubuntu-latest
-    name: Build Frontend
-    needs:
-    - deployPreProd
-    steps:
-    - name: Make THINGS
-      run: echo "Hello World"
+  # tests:
+  #   runs-on: ubuntu-latest
+  #   name: Build Frontend
+  #   needs:
+  #   - deployPreProd
+  #   steps:
+  #   - name: Make THINGS
+  #     run: echo "Hello World"
   
-  deployProd:
-    runs-on: ubuntu-latest
-    name: Deploy Production
-    needs:
-    - tests
+  # deployProd:
+  #   runs-on: ubuntu-latest
+  #   name: Deploy Production
+  #   needs:
+  #   - tests
 
-    steps:
-    - name: Make THINGS
-      run: echo "Hello World"
+  #   steps:
+  #   - name: Make THINGS
+  #     run: echo "Hello World"
