@@ -82,15 +82,27 @@ jobs:
   #       dockerfile-path: ./DockerfileFrontend # optional
   #       # build-context: ./backend/ # optional
   
-  # deployPreProd:
-  #   runs-on: ubuntu-latest
-  #   name: Deploy PreProd
-  #   needs:
-  #   - backend
-  #   - frontend
+  deployPreProd:
+    runs-on: ubuntu-latest
+    name: Deploy PreProd
+    needs:
+    - backend
+    - frontend
+
+    steps:
+    - name: Make THINGS
   
-  # tests:
-  #   runs-on: ubuntu-latest
-  #   name: Build Frontend
-  #   needs:
-  #   - deployPreProd
+  tests:
+    runs-on: ubuntu-latest
+    name: Build Frontend
+    needs:
+    - deployPreProd
+  
+  deployProd:
+    runs-on: ubuntu-latest
+    name: Deploy Production
+    needs:
+    - tests
+
+    steps:
+    - name: Make THINGS
