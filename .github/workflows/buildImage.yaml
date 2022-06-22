@@ -67,6 +67,8 @@ jobs:
         node-version: '16'
     - name: Compile Frontend
       run: |
+            echo "CI=false" >> $GITHUB_ENV
+            echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_DEV }}" >> $GITHUB_ENV
             cd frontend
             npm ci --legacy-peer-deps
             npm run build
