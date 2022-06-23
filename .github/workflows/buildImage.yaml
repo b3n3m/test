@@ -93,6 +93,7 @@ jobs:
     needs:
     - backend
     - frontend
+    - version
 
     steps:
     - name: Deploy PreProd
