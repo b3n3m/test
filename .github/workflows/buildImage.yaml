@@ -23,7 +23,7 @@ jobs:
     - consecutiveness
 
     outputs:
-      vID: ${{ steps.cutSHA.outputs.test }}
+      vID: ${{ steps.cutSHA.outputs.sha7 }}
 
     steps:
     - name: Get short SHA
@@ -57,6 +57,7 @@ jobs:
         github-push-secret: ${{secrets.GITHUB_TOKEN}}
         docker-image-name: bmo-test-back
         docker-image-tag: ${{ needs.version.outputs.vID }} # optional
+        # docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
         dockerfile-path: ./DockerfileBackend # optional
         # build-context: ./backend/ # optional
   
