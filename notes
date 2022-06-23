@@ -22,3 +22,7 @@ rollout Prod
 https://www.frankfurt-university.de/de/hochschule/fachbereich-2-informatik-und-ingenieurwissenschaften/einrichtungen-services/bscw-plattform/bscw-weblaufwerk/
 
 https://www.ostc.de/howtos/logrotate-HOWTO.html
+
+
+sed "s/^APP_IMAGE.*/APP_IMAGE=ghcr.io/b3n3m/bmo-test-back:0.1/" ./env
+sed "s|^APP_IMAGE.*|APP_IMAGE=ghcr.io/b3n3m/bmo-test-back:${testV}|" ./env
