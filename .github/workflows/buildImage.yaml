@@ -16,9 +16,17 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
   
-  version:
-    name: Set Version
+  # version:
+  #   name: Get Version
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #   - consecutiveness
+
+  #   steps:
+
+  backend:
     runs-on: ubuntu-latest
+    name: Build Backend
     needs:
     - consecutiveness
 
@@ -26,14 +34,7 @@ jobs:
     - name: Get short SHA
       id: cutSHA
       run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
-
-  backend:
-    runs-on: ubuntu-latest
-    name: Build Backend
-    needs:
-    - version
-
-    steps:
+    
     - uses: actions/checkout@v3
 
     - name: List all FIles
