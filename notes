@@ -26,6 +26,7 @@ https://www.ostc.de/howtos/logrotate-HOWTO.html
 
 sed "s/^APP_IMAGE.*/APP_IMAGE=ghcr.io/b3n3m/bmo-test-back:0.1/" ./env
 sed "s|^APP_IMAGE.*|APP_IMAGE=ghcr.io/b3n3m/bmo-test-back:${testV}|" ./env
+sed "s|^IMAGE_TAG=.*|IMAGE_TAG=${testV}|" ./env
 
 |Domain         |Cost year 1 in €|Cost Year 1+  in €| Name Description|
 |-|-|-|-|
@@ -34,3 +35,5 @@ sed "s|^APP_IMAGE.*|APP_IMAGE=ghcr.io/b3n3m/bmo-test-back:${testV}|" ./env
 |pm-sim.study    |12      |25      |Project Management Simulation|
 |itpsm.lol       |2       |25      |IT Project Management Simulation|
 |sipman.top      |3       |11      |Simulation Project Management|
+
+mount -t davfs -o umask=0022,gid=1002,uid=1002 https://bscw.frankfurt-university.de/EduRes/bscw/bscw.cgi/home /mnt/bscw
