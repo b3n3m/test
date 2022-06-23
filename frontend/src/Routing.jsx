@@ -7,6 +7,7 @@ import UserOverview from "./pages/UserOverview";
 import Simulation from "./pages/Simulation";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ResetPassword from "./pages/ResetPassword"
 import Help from "./pages/Help";
 import GDPR from "./pages/GDPR";
 import Imprint from "./pages/Imprint";
@@ -24,7 +25,7 @@ const Routing = () => {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
-                    // "X-CSRFToken": getCookie("csrftoken"),
+                    "X-CSRFToken": getCookie("csrftoken"),
                     "Content-Type": "application/json"
                 },
             })
@@ -78,6 +79,7 @@ const Routing = () => {
                             <Route path="/" element={<Landing />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
+                            <Route path="/reset-password" element={<ResetPassword />} />
                             <Route path="*" element={<Navigate to="/login" replace />} />
                         </>
                     }

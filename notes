@@ -26,3 +26,11 @@ https://www.ostc.de/howtos/logrotate-HOWTO.html
 
 sed "s/^APP_IMAGE.*/APP_IMAGE=ghcr.io/b3n3m/bmo-test-back:0.1/" ./env
 sed "s|^APP_IMAGE.*|APP_IMAGE=ghcr.io/b3n3m/bmo-test-back:${testV}|" ./env
+
+|Domain         |Cost year 1 in €|Cost Year 1+  in €| Name Description|
+|-|-|-|-|
+|simler.app      |14      |16      |simulation Learning|
+|softdsim.pro    |4       |17      |Project Name|
+|pm-sim.study    |12      |25      |Project Management Simulation|
+|itpsm.lol       |2       |25      |IT Project Management Simulation|
+|sipman.top      |3       |11      |Simulation Project Management|
