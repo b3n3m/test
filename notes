@@ -37,3 +37,7 @@ sed "s|^IMAGE_TAG=.*|IMAGE_TAG=${testV}|" ./env
 |sipman.top      |3       |11      |Simulation Project Management|
 
 mount -t davfs -o umask=0022,gid=1002,uid=1002 https://bscw.frankfurt-university.de/EduRes/bscw/bscw.cgi/home /mnt/bscw
+
+30 0 * * * . $HOME/.profile && cd ${BASE_DIR_WEB}/DEV/ && while [[ $(ls -l | grep -v prd | wc -l) -gt 10 ]];do rm -rf $(ls -t | tail -n1); done
+
+30 0 * * * . $HOME/.profile  && while [[ $(ls -l ${BASE_DIR_WEB}/DEV/ | grep -v prd | wc -l) -gt 10 ]];do rm -rf $(ls -t ${BASE_DIR_WEB}/DEV/ | tail -n1); done
