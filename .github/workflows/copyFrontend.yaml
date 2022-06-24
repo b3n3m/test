@@ -38,7 +38,7 @@ jobs:
       # if: ${{ github.ref == 'refs/heads/develop' }}
       run: |
             echo "DIR=DEV" >> $GITHUB_ENV
-            echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_DEV }}" >> $GITHUB_ENV
+            echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_PREPROD }}" >> $GITHUB_ENV
             echo "CI=false" >> $GITHUB_ENV
 
     - name: Setup Node

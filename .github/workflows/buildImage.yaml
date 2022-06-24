@@ -3,8 +3,8 @@ name: Build Image
 on:
   push:
     branches:
-    # - main
-    - develop
+    - main
+    # - develop
   workflow_dispatch:
 
 jobs:
@@ -67,8 +67,8 @@ jobs:
     - name: Check / set env Dev
       run: |
             echo "DIR=DEV" >> $GITHUB_ENV
-            echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_PREPROD }}" >> $GITHUB_ENV
             echo "CI=false" >> $GITHUB_ENV
+            echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_PREPROD }}" >> $GITHUB_ENV
 
     - uses: actions/setup-node@v3
       with:
