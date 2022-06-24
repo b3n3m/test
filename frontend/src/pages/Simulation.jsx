@@ -177,7 +177,7 @@ const Simulation = () => {
 
     async function startScenario() {
         try {
-            const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/sim/start`, {
+            const res = await fetch(`/api/sim/start`, {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify({ "template-id": state.id, "config-id": 1 }),
@@ -193,7 +193,7 @@ const Simulation = () => {
             setScenarioIsLoading(false)
 
             // get skilltypes
-            const resSkill = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/skill-type`, {
+            const resSkill = await fetch(`/api/skill-type`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -228,7 +228,7 @@ const Simulation = () => {
             nextValues = returnValues
         }
         try {
-            const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/sim/next`, {
+            const res = await fetch(`/api/sim/next`, {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify(nextValues),
