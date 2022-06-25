@@ -1,11 +1,11 @@
 FROM python:3.10
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-WORKDIR /home/app
+WORKDIR /home/app/webapp
 RUN groupadd -r djangoRUN && useradd --no-log-init -r -g djangoRUN djangoRUN
 # Install requirements
-COPY --chown=djangoRUN:djangoRUN ./backend/requirements.txt .
-RUN pip install -r ./requirements.txt
+COPY --chown=djangoRUN:djangoRUN ./backend/requirements.txt /home/app/webapp/
+RUN pip install -r /home/app/webapp/requirements.txt
 # Entrypoint
 COPY --chown=djangoRUN:djangoRUN ./backend/ .
 COPY --chown=djangoRUN:djangoRUN ./deploy/entrypoint.sh /
