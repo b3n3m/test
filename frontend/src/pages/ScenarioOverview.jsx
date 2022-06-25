@@ -33,7 +33,7 @@ const ScenarioOverview = () => {
 
     const fetchScenarios = async () => {
         setIsLoading(true)
-        const res = await fetch(`/api/template-overview`, {
+        const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/template-overview`, {
             method: 'GET',
             credentials: 'include',
         })
@@ -47,7 +47,7 @@ const ScenarioOverview = () => {
 
     const deleteScenario = async (scenario) => {
         try {
-            const res = await fetch(`/api/template-scenario/${scenario.id}`, {
+            const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/template-scenario/${scenario.id}`, {
                 method: 'DELETE',
                 credentials: 'include',
                 headers: {

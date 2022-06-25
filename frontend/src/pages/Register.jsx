@@ -57,7 +57,7 @@ const Register = () => {
         setRegisterSuccess('attempting')
         if (idInputValid && passwortInputValid && passwortRepeatInputValid) {
             try {
-                const res = await fetch(`/api/register`, {
+                const res = await fetch(`${process.env.REACT_APP_DJANGO_HOST}/api/register`, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',

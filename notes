@@ -47,3 +47,5 @@ mount -t davfs -o umask=0022,gid=1002,uid=1002 https://bscw.frankfurt-university
 176.10.52.142 - - [24/Jun/2022:15:39:52 +0200] "GET /pp.uas.bspace.xyz/api/authenticated HTTP/1.1" 200 406 "https://pp.uas.bspace.xyz/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36" "-"
 
 echo "REACT_APP_DJANGO_HOST=${{ secrets.DOMAIN_PREPROD }}" >> $GITHUB_ENV
+
+grep -rl '${process.env.REACT_APP_DJANGO_HOST}' . | xargs sed 's/\${process.env.REACT_APP_DJANGO_HOST}//g' | grep api
