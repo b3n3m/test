@@ -108,7 +108,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    name: Build Frontend
+    name: Tests on Preprod
     needs:
     - deployPreProd
     steps:
@@ -120,6 +120,7 @@ jobs:
     name: Deploy Production
     needs:
     - tests
+    - version
 
     steps:
     - name: Deploy Prod
