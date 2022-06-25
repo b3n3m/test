@@ -106,25 +106,27 @@ jobs:
             EOF2
             EOF
 
-  #   steps:
-  #   - name: Make THINGS
-  #     run: echo "Hello World"
+  tests:
+    runs-on: ubuntu-latest
+    name: Build Frontend
+    needs:
+    - deployPreProd
+    steps:
+    - name: Make THINGS
+      run: echo "Hello World"
   
-  # tests:
-  #   runs-on: ubuntu-latest
-  #   name: Build Frontend
-  #   needs:
-  #   - deployPreProd
-  #   steps:
-  #   - name: Make THINGS
-  #     run: echo "Hello World"
-  
-  # deployProd:
-  #   runs-on: ubuntu-latest
-  #   name: Deploy Production
-  #   needs:
-  #   - tests
+  deployProd:
+    runs-on: ubuntu-latest
+    name: Deploy Production
+    needs:
+    - tests
 
-  #   steps:
-  #   - name: Make THINGS
-  #     run: echo "Hello World"
+    steps:
+    - name: Deploy Prod
+      run: |
+            sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
+            ssh docker-agent <<-'EOF2'
+                sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose \
+                && docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app_preprod_compose.yaml --env-file ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose up -d
+            EOF2
+            EOF
