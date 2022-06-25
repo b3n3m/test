@@ -9,8 +9,8 @@
 
 # Apply database migrations
 echo "Apply database migrations"
-python /home/app/webapp/manage.py migrate
+python /home/app/manage.py migrate
 
 # Start server
 echo "Starting server"
-python /home/app/webapp/manage.py runserver 0.0.0.0:8000
+python /home/app/manage.py runserver 0.0.0.0:8000
