@@ -23,7 +23,7 @@ jobs:
     - name: Validate Commit Message Content
       uses: gsactions/commit-message-checker@v1
       with:
-        pattern: '(Merge|dbeaver|cloudbeaver)'
+        pattern: '(#major|#minor|#patch)'
         # pattern: '^(#\d{3,6}|((Merge|dbeaver|cloudbeaver).+?#\d{3,6})|((DB-|CB-|DVO-)\d+))\s.*$'
         error: |
           Each commit message must include one of the following:
