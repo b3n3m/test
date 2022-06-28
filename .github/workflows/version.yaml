@@ -18,18 +18,29 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        fetch-depth: 0
+        fetch-depth: 1
+
+    - name: Validate Commit Message Content
+      uses: gsactions/commit-message-checker@v1
+      with:
+        pattern: '(Merge|dbeaver|cloudbeaver)'
+        # pattern: '^(#\d{3,6}|((Merge|dbeaver|cloudbeaver).+?#\d{3,6})|((DB-|CB-|DVO-)\d+))\s.*$'
+        error: |
+          Each commit message must include one of the following:
+          *  #major -> for changes which breaks the API
+          *  #minor -> for feature changes which NOT breaks the API
+          *  #patch -> for Fixes on current feature
       
     - uses: paulhatch/semantic-version@v4.0.2
       id: versioning
       with:
         # The prefix to use to identify tags
-        tag_prefix: "v"
+        # tag_prefix: "v"
         # A string which, if present in a git commit, indicates that a change represents a
         # major (breaking) change, supports regular expressions wrapped with '/'
-        major_pattern: "(MAJOR)"
+        major_pattern: "#major"
         # Same as above except indicating a minor change, supports regular expressions wrapped with '/'
-        minor_pattern: "(MINOR)"
+        minor_pattern: "#minor"
         # A string to determine the format of the version output
         format: "${major}.${minor}.${patch}"
         # Optional path to check for changes. If any changes are detected in the path the
@@ -60,3 +71,4 @@ jobs:
             ref: 'refs/tags/${{ steps.versioning.outputs.major }}.${{ steps.versioning.outputs.minor }}.${{ steps.versioning.outputs.patch }},
             sha: context.sha
           })
+    
