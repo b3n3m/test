@@ -129,7 +129,8 @@ jobs:
       with:
         github-push-secret: ${{secrets.GITHUB_TOKEN}}
         docker-image-name: bmo-test-back
-        docker-image-tag: ${{ needs.version.outputs.vID }} # optional
+        # docker-image-tag: ${{ needs.version.outputs.vID }} # optional
+        docker-image-tag: ${{ env.vID }} # optional
         # docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
         dockerfile-path: ./DockerfileBackend # optional
         # build-context: ./backend/ # optional
@@ -163,7 +164,8 @@ jobs:
       with:
         github-push-secret: ${{secrets.GITHUB_TOKEN}}
         docker-image-name: bmo-test-front
-        docker-image-tag: ${{ needs.version.outputs.vID }} # optional
+        # docker-image-tag: ${{ needs.version.outputs.vID }} # optional
+        docker-image-tag: ${{ env.vID }} # optional
         dockerfile-path: ./DockerfileFrontend # optional
         # build-context: ./backend/ # optional
   
@@ -180,7 +182,8 @@ jobs:
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             ssh docker-agent <<-'EOF2'
-                sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose \
+                # sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose \
+                sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ env.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose \
                 && docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app_preprod_compose.yaml --env-file ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose up -d
             EOF2
             EOF
@@ -206,7 +209,8 @@ jobs:
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             ssh docker-agent <<-'EOF2'
-                sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose \
+                # sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose \
+                sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ env.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose \
                 && docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app_preprod_compose.yaml --env-file ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose up -d
             EOF2
             EOF
