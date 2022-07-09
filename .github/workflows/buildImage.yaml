@@ -16,21 +16,101 @@ jobs:
     - uses: mktcode/consecutive-workflow-action@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+
+  # snyk:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Build a Docker image
+  #     run: docker build -t softdsim/backend ./Backend
+  #   - name: Run Snyk to check Docker image for vulnerabilities
+  #     id: vulneberalities-backend
+  #     continue-on-error: true
+  #     uses: snyk/actions/docker@master
+  #     env:
+  #       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  #     with:
+  #       image: softdsim/backend
+  #       args: --file=./Backend/Dockerfile
+  #   - name: Upload result to GitHub Code Scanning
+  #     uses: github/codeql-action/upload-sarif@v1
+  #     with:
+  #       sarif_file: snyk.sarif
   
-  version:
-    name: Get Version
+
+  vulnerability:
     runs-on: ubuntu-latest
+    name: Vul Scan (Placeholder)
     needs:
     - consecutiveness
-
-    outputs:
-      vID: ${{ steps.cutSHA.outputs.sha7 }}
-
     steps:
-    - name: Get short SHA
-      id: cutSHA
-      run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
-      # run: echo "::set-output name=sha7::$(echo 5c44e1c)"
+    - name: Make THINGS
+      run: echo "Hello World"
+
+  # version:
+  #   name: Get Version
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #   - consecutiveness
+
+  #   outputs:
+  #     vID: ${{ steps.cutSHA.outputs.sha7 }}
+
+  #   steps:
+  #   - name: Get short SHA
+  #     id: cutSHA
+  #     run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
+  #     # run: echo "::set-output name=sha7::$(echo 5c44e1c)"
+
+  version:
+    runs-on: ubuntu-latest
+    name: Versioning
+    needs:
+    - consecutiveness
+    - vulnerability
+      
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Validate Commit Message Content
+      uses: gsactions/commit-message-checker@v1
+      with:
+        pattern: '(#major|#minor|#patch)'
+        # pattern: '^(#\d{3,6}|((Merge|dbeaver|cloudbeaver).+?#\d{3,6})|((DB-|CB-|DVO-)\d+))\s.*$'
+        error: |
+          Each commit message must include one of the following:
+          *  #major -> for changes which breaks the API
+          *  #minor -> for feature changes which NOT breaks the API
+          *  #patch -> for Fixes on current feature
+      
+    - uses: paulhatch/semantic-version@v4.0.2
+      id: versioning
+      with:
+        # The prefix to use to identify tags
+        # tag_prefix: "v"
+        # major (breaking) change, supports regular expressions wrapped with '/'
+        major_pattern: "#major"
+        # Same as above except indicating a minor change, supports regular expressions wrapped with '/'
+        minor_pattern: "#minor"
+        # A string to determine the format of the version output
+        format: "${major}.${minor}.${patch}"
+        # If this is set to true, *every* commit will be treated as a new version.
+        bump_each_commit: true
+
+    - name: Version Check
+      run: |
+            echo "${{ steps.versioning.outputs.major }}.${{ steps.versioning.outputs.minor }}.${{ steps.versioning.outputs.patch }}"
+            echo "vID=${{ steps.versioning.outputs.major }}.${{ steps.versioning.outputs.minor }}.${{ steps.versioning.outputs.patch }}" >> $GITHUB_ENV
+
+    - name: Tag commit
+      uses: tvdias/github-tagger@v0.0.1
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        tag: "${{ env.vID }}"
 
   backend:
     runs-on: ubuntu-latest
@@ -108,7 +188,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    name: Tests on Preprod
+    name: Tests (Placeholder)
     needs:
     - deployPreProd
     steps:
