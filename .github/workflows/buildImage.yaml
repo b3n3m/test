@@ -190,7 +190,7 @@ jobs:
             ssh docker-agent <<-'EOF2'
                 sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose \
                 && docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app_compose.yaml --env-file ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose up -d
-                "returncode: $?"
+                echo "returncode: $?"
             EOF2
             EOF
 
