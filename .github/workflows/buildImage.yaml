@@ -67,6 +67,9 @@ jobs:
     needs:
     - consecutiveness
     - vulnerability
+
+    outputs:
+      vID: ${{ steps.versionCheck.outputs.sha7 }}
       
     steps:
 
@@ -101,15 +104,18 @@ jobs:
         bump_each_commit: true
 
     - name: Version Check
+      id: versionCheck
       run: |
             echo "${{ steps.versioning.outputs.major }}.${{ steps.versioning.outputs.minor }}.${{ steps.versioning.outputs.patch }}"
             echo "vID=${{ steps.versioning.outputs.major }}.${{ steps.versioning.outputs.minor }}.${{ steps.versioning.outputs.patch }}" >> $GITHUB_ENV
+            echo "::set-output name=vID::$(echo ${{ steps.versioning.outputs.major }}.${{ steps.versioning.outputs.minor }}.${{ steps.versioning.outputs.patch }})"
 
     - name: Tag commit
       uses: tvdias/github-tagger@v0.0.1
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         tag: "${{ env.vID }}"
+
 
   backend:
     runs-on: ubuntu-latest
@@ -129,8 +135,8 @@ jobs:
       with:
         github-push-secret: ${{secrets.GITHUB_TOKEN}}
         docker-image-name: bmo-test-back
-        # docker-image-tag: ${{ needs.version.outputs.vID }} # optional
-        docker-image-tag: ${{ env.vID }} # optional
+        docker-image-tag: ${{ needs.version.outputs.vID }} # optional
+        # docker-image-tag: ${{ env.vID }} # optional
         # docker-image-tag: ${{ steps.cutSHA.outputs.sha7 }} # optional
         dockerfile-path: ./DockerfileBackend # optional
         # build-context: ./backend/ # optional
@@ -164,8 +170,8 @@ jobs:
       with:
         github-push-secret: ${{secrets.GITHUB_TOKEN}}
         docker-image-name: bmo-test-front
-        # docker-image-tag: ${{ needs.version.outputs.vID }} # optional
-        docker-image-tag: ${{ env.vID }} # optional
+        docker-image-tag: ${{ needs.version.outputs.vID }} # optional
+        # docker-image-tag: ${{ env.vID }} # optional
         dockerfile-path: ./DockerfileFrontend # optional
         # build-context: ./backend/ # optional
   
@@ -182,8 +188,8 @@ jobs:
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             ssh docker-agent <<-'EOF2'
-                # sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose \
-                sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ env.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose \
+                sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose \
+                # sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ env.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose \
                 && docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app_preprod_compose.yaml --env-file ${{ secrets.BASE_DIR_CONF }}/.env_PREPROD_compose up -d
             EOF2
             EOF
@@ -209,8 +215,8 @@ jobs:
       run: |
             sshpass -p "${{ secrets.SSH_PAS }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{secrets.SSH_HOST}} << EOF
             ssh docker-agent <<-'EOF2'
-                # sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose \
-                sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ env.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose \
+                sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ needs.version.outputs.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose \
+                # sed -ir "s|^IMAGE_TAG=.*|IMAGE_TAG=${{ env.vID }}|" ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose \
                 && docker-compose -f ${{ secrets.BASE_DIR_OPS }}compose/app_preprod_compose.yaml --env-file ${{ secrets.BASE_DIR_CONF }}/.env_PROD_compose up -d
             EOF2
             EOF
