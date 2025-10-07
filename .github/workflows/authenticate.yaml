@@ -1,0 +1,74 @@
+name: Test Keycloak Authentication with Bore
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  test-auth:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test authentication via Bore tunnels
+        env:
+          # Set these in repository secrets
+          KEYCLOAK_TUNNEL_URL: ${{ secrets.KEYCLOAK_TUNNEL_URL }}  # https://xyz123.bore.pub
+          FLASK_TUNNEL_URL: ${{ secrets.FLASK_TUNNEL_URL }}        # https://abc456.bore.pub
+        run: |
+          echo "🔑 Getting token from Keycloak at: $KEYCLOAK_TUNNEL_URL"
+          
+          # Get access token from Keycloak
+          TOKEN_RESPONSE=$(curl -s -X POST \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "client_id=githubaction&client_secret=secret&grant_type=client_credentials" \
+            "$KEYCLOAK_TUNNEL_URL/realms/master/protocol/openid-connect/token")
+          
+          echo "Token response: $TOKEN_RESPONSE"
+          
+          TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token // empty')
+          
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "❌ Failed to get token from Keycloak"
+            echo "Response was: $TOKEN_RESPONSE"
+            exit 1
+          fi
+          
+          echo "✅ Token received: ${TOKEN:0:30}..."
+          
+          echo "🌐 Testing Flask server at: $FLASK_TUNNEL_URL"
+          
+          # Call Flask protected endpoint
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -H "Authorization: Bearer $TOKEN" \
+            "$FLASK_TUNNEL_URL/protected")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "📊 HTTP Status: $HTTP_CODE"
+          echo "📝 Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ SUCCESS: Authentication flow completed!"
+          else
+            echo "❌ FAILED: Authentication failed with status $HTTP_CODE"
+            echo "Error details: $BODY"
+            exit 1
+          fi
+          
+      - name: Test unauthorized access (should fail)
+        env:
+          FLASK_TUNNEL_URL: ${{ secrets.FLASK_TUNNEL_URL }}
+        run: |
+          echo "🚫 Testing unauthorized access..."
+          HTTP_CODE=$(curl -s -w "%{http_code}" -o /dev/null "$FLASK_TUNNEL_URL/protected")
+          
+          if [ "$HTTP_CODE" = "401" ]; then
+            echo "✅ Correctly rejected unauthorized request"
+          else
+            echo "❌ Should have rejected unauthorized request (got $HTTP_CODE)"
+            exit 1
+          fi
